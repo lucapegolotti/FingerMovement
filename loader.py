@@ -22,7 +22,6 @@ def load_data():
         std = torch.std(train_input[:,i,:])
         train_input[:,i,:] = (train_input[:,i,:] - me)/std;
         test_input[:,i,:] = (test_input[:,i,:] - me)/std;
-
     # train_target = train_target.view(train_samples,1)
     # test_target = test_target.view(test_samples,1)
 
