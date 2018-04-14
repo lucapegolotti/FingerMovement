@@ -17,22 +17,13 @@ def load_data():
     test_samples = test_input.size(0)
     channels = train_input.size(1)
 
-    M = torch.Tensor(train_samples,2)
-
-    for i in range(0,train_samples):
-        M[i,train_target[i]] = 0.9;
-        M[i,1-train_target[i]] = -0.9;
-
     for i in range(0,channels):
         me = torch.mean(train_input[:,i,:])
         std = torch.std(train_input[:,i,:])
         train_input[:,i,:] = (train_input[:,i,:] - me)/std;
         test_input[:,i,:] = (test_input[:,i,:] - me)/std;
 
-    N = torch.Tensor(test_samples,2)
+    # train_target = train_target.view(train_samples,1)
+    # test_target = test_target.view(test_samples,1)
 
-    for i in range(0,test_samples):
-        N[i,train_target[i]] = 0.9;
-        N[i,1-train_target[i]] = -0.9;
-
-    return train_input, M, test_input, N
+    return train_input, train_target, test_input, test_target
