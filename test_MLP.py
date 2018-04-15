@@ -5,6 +5,11 @@ from torch.autograd import Variable
 from torch import nn
 from torch.nn import functional as F
 
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+
+import random
+
 torch.manual_seed(np.random.randint(0,100000))
 
 train_input, train_target, test_input, test_target = loader.load_data()
@@ -35,10 +40,19 @@ class Net(nn.Module):
         return x
 
 def train_model(model, train_input, train_target, mini_batch_size):
-    for e in range(0, 1000):
+    # initial_mini_batch_size = mini_batch_size
+    # fig, ax = plt.subplots()
+
+    n_epochs = 1000
+
+    # x = np.arange(0, n_epochs, 1)
+
+    for e in range(0, n_epochs):
+        mini_batch_size = initial_mini_batch_size
         sum_loss = 0
         # We do this with mini-batches
         for b in range(0, train_input.size(0), mini_batch_size):
+            mini_batch_size = min(mini_batch_size, train_input.size(0) - b)
             output = model.forward(train_input.narrow(0, b, mini_batch_size))
             train_target_narrowed = train_target.narrow(0, b, mini_batch_size).long()
 
@@ -54,13 +68,29 @@ def compute_nb_errors(model, input, target, mini_batch_size):
     y = model.forward(input)
     indicesy = np.argmax(y.data,1).float()
 
-    print(indicesy - target.data)
     nberrors = np.linalg.norm(indicesy - target.data,0)
 
     return nberrors
 
+def create_validation(train_input, train_output, percentage):
+    samples = train_input.size(0)
+    validation_size = round(percentage * samples)
+
+    indices = torch.LongTensor(np.random.choice(samples, samples))
+
+    validation_input = train_input[indices[0:validation_size],:,:]
+    validation_output = train_output[indices[0:validation_size]]
+
+    train_input = train_input[indices[validation_size+1:samples],:,:]
+    train_output = train_output[indices[validation_size+1:samples]]
+
+    return train_input, train_output, validation_input, validation_output
+
+
 train_input, train_target = Variable(train_input), Variable(train_target)
 test_input, test_target = Variable(test_input), Variable(test_target)
+
+train_input, train_target, validation_input, validation_output = create_validation(train_input, train_target, 0.05)
 
 hidden = 100
 # model, criterion = Net(hidden1), nn.MSELoss()
