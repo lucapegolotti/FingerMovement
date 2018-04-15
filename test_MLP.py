@@ -48,13 +48,9 @@ def train_model(model, train_input, train_target, validation_input, validation_t
     initial_mini_batch_size = mini_batch_size
 
     train_size = train_input.size(0)
-    validation_size = validation_input.size(0)
-    fig, ax = plt.subplots()
+    validation_size = validation_input.size()
 
     n_epochs = 1000
-
-    x = []
-    y = []
 
     for e in range(0, n_epochs):
         mini_batch_size = initial_mini_batch_size
@@ -73,11 +69,12 @@ def train_model(model, train_input, train_target, validation_input, validation_t
                 p.data.sub_(eta * p.grad.data)
 
         train_error = compute_nb_errors(model,train_input, train_target)
-        validation_error = compute_nb_errors(model,validation_input, validation_target)
         print("Epoch = {0:d}".format(e))
         print("Loss function = {0:.8f}".format(sum_loss))
         print("Train error: {0:.2f}%".format((train_error/train_size)*100))
-        print("Validation error: {0:.2f}%".format((validation_error/validation_size)*100))
+        if validation_size:
+            validation_error = compute_nb_errors(model,validation_input, validation_target)
+            print("Validation error: {0:.2f}%".format((validation_error/validation_size[0])*100))
 
 def create_validation(train_input, train_output, percentage):
     samples = train_input.size(0)
@@ -85,8 +82,12 @@ def create_validation(train_input, train_output, percentage):
 
     indices = torch.LongTensor(np.random.choice(samples, samples))
 
-    validation_input = train_input[indices[0:validation_size],:,:]
-    validation_output = train_output[indices[0:validation_size]]
+    if (percentage != 0):
+        validation_input = train_input[indices[0:validation_size],:,:]
+        validation_output = train_output[indices[0:validation_size]]
+    else:
+        validation_input = torch.LongTensor([]);
+        validation_output = torch.LongTensor([]);
 
     train_input = train_input[indices[validation_size+1:samples],:,:]
     train_output = train_output[indices[validation_size+1:samples]]
@@ -97,7 +98,7 @@ def create_validation(train_input, train_output, percentage):
 train_input, train_target = Variable(train_input), Variable(train_target)
 test_input, test_target = Variable(test_input), Variable(test_target)
 
-train_input, train_target, validation_input, validation_output = create_validation(train_input, train_target, 0.0)
+train_input, train_target, validation_input, validation_output = create_validation(train_input, train_target, 0.2)
 
 hidden = 100
 # model, criterion = Net(hidden1), nn.MSELoss()
