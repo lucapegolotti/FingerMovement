@@ -5,9 +5,6 @@ from torch.autograd import Variable
 from torch import nn
 from torch.nn import functional as F
 
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-
 import random
 
 torch.manual_seed(np.random.randint(0,100000))
@@ -39,13 +36,25 @@ class Net(nn.Module):
         x = self.fc2(x)
         return x
 
-def train_model(model, train_input, train_target, mini_batch_size):
-    # initial_mini_batch_size = mini_batch_size
-    # fig, ax = plt.subplots()
+def compute_nb_errors(model, input, target):
+    y = model.forward(input)
+    indicesy = np.argmax(y.data,1).float()
+
+    nberrors = np.linalg.norm(indicesy - target.data,0)
+
+    return nberrors
+
+def train_model(model, train_input, train_target, validation_input, validation_target, mini_batch_size):
+    initial_mini_batch_size = mini_batch_size
+
+    train_size = train_input.size(0)
+    validation_size = validation_input.size(0)
+    fig, ax = plt.subplots()
 
     n_epochs = 1000
 
-    # x = np.arange(0, n_epochs, 1)
+    x = []
+    y = []
 
     for e in range(0, n_epochs):
         mini_batch_size = initial_mini_batch_size
@@ -62,15 +71,13 @@ def train_model(model, train_input, train_target, mini_batch_size):
             loss.backward()
             for p in model.parameters():
                 p.data.sub_(eta * p.grad.data)
-        print(e, sum_loss)
 
-def compute_nb_errors(model, input, target, mini_batch_size):
-    y = model.forward(input)
-    indicesy = np.argmax(y.data,1).float()
-
-    nberrors = np.linalg.norm(indicesy - target.data,0)
-
-    return nberrors
+        train_error = compute_nb_errors(model,train_input, train_target)
+        validation_error = compute_nb_errors(model,validation_input, validation_target)
+        print("Epoch = {0:d}".format(e))
+        print("Loss function = {0:.8f}".format(sum_loss))
+        print("Train error: {0:.2f}%".format((train_error/train_size)*100))
+        print("Validation error: {0:.2f}%".format((validation_error/validation_size)*100))
 
 def create_validation(train_input, train_output, percentage):
     samples = train_input.size(0)
@@ -90,7 +97,7 @@ def create_validation(train_input, train_output, percentage):
 train_input, train_target = Variable(train_input), Variable(train_target)
 test_input, test_target = Variable(test_input), Variable(test_target)
 
-train_input, train_target, validation_input, validation_output = create_validation(train_input, train_target, 0.05)
+train_input, train_target, validation_input, validation_output = create_validation(train_input, train_target, 0.0)
 
 hidden = 100
 # model, criterion = Net(hidden1), nn.MSELoss()
@@ -98,7 +105,7 @@ model, criterion = Net(hidden), nn.CrossEntropyLoss()
 
 eta, mini_batch_size = 1e-1, 79
 
-train_model(model, train_input, train_target, mini_batch_size)
+train_model(model, train_input, train_target, validation_input, validation_output, mini_batch_size)
 nberrors_train = compute_nb_errors(model,train_input, train_target, mini_batch_size)
 nberrors_test = compute_nb_errors(model,test_input, test_target, mini_batch_size)
 
