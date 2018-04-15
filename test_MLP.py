@@ -14,21 +14,24 @@ test_target = test_target.type(torch.FloatTensor)
 
 train_size = train_target.size(0)
 test_size = test_input.size(0)
+#
+# train_input = train_input.view(316,1400).squeeze(1)
+# test_input = test_input.view(100,1400).squeeze(1)
 
-train_input = train_input.view(316,1400).squeeze(1)
-test_input = test_input.view(100,1400).squeeze(1)
 
 class Net(nn.Module):
-    def __init__(self, hidden1, hidden2):
+    def __init__(self,hidden):
         super(Net, self).__init__()
-        self.fc1 = nn.Linear(1400, hidden1)
-        self.fc2 = nn.Linear(hidden1, hidden2)
-        self.fc3 = nn.Linear(hidden2, 2)
+        self.conv1 = nn.Conv1d(28, 32, kernel_size=6)
+        self.conv2 = nn.Conv1d(32, 64, kernel_size=4)
+        self.fc1 = nn.Linear(256, hidden)
+        self.fc2 = nn.Linear(hidden, 2)
 
     def forward(self, x):
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = F.sigmoid(self.fc3(x))
+        x = F.relu(F.max_pool1d(self.conv1(x), kernel_size=3, stride=3))
+        x = F.relu(F.max_pool1d(self.conv2(x), kernel_size=3, stride=3))
+        x = F.relu(self.fc1(x.view(-1, 256)))
+        x = self.fc2(x)
         return x
 
 def train_model(model, train_input, train_target, mini_batch_size):
@@ -59,11 +62,10 @@ def compute_nb_errors(model, input, target, mini_batch_size):
 train_input, train_target = Variable(train_input), Variable(train_target)
 test_input, test_target = Variable(test_input), Variable(test_target)
 
-hidden1 = 50
-hidden2 = 50
-
+hidden = 100
 # model, criterion = Net(hidden1), nn.MSELoss()
-model, criterion = Net(hidden1,hidden2), nn.CrossEntropyLoss()
+model, criterion = Net(hidden), nn.CrossEntropyLoss()
+
 eta, mini_batch_size = 1e-1, 79
 
 train_model(model, train_input, train_target, mini_batch_size)

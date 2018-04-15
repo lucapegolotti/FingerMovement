@@ -16,13 +16,11 @@ def load_data():
     train_samples = train_input.size(0)
     test_samples = test_input.size(0)
     channels = train_input.size(1)
-
+    
     for i in range(0,channels):
         me = torch.mean(train_input[:,i,:])
         std = torch.std(train_input[:,i,:])
         train_input[:,i,:] = (train_input[:,i,:] - me)/std;
         test_input[:,i,:] = (test_input[:,i,:] - me)/std;
-    # train_target = train_target.view(train_samples,1)
-    # test_target = test_target.view(test_samples,1)
 
     return train_input, train_target, test_input, test_target
