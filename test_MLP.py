@@ -1,6 +1,7 @@
 import torch
 import loader
 from parameters_sampler import ParametersSampler
+from output_manager import OutputManager
 
 import numpy as np
 from torch.autograd import Variable
@@ -13,6 +14,8 @@ torch.manual_seed(np.random.randint(0,100000))
 
 parameters = ParametersSampler()
 parameters.showMe()
+
+outputManager = OutputManager()
 
 train_input, train_target, test_input, test_target = loader.load_data()
 
@@ -248,5 +251,12 @@ train_model(model, train_input, train_target, validation_input, validation_outpu
 nberrors_train = compute_nb_errors(model,train_input, train_target)
 nberrors_test = compute_nb_errors(model,test_input, test_target)
 
-print("Train error: {0:.2f}%".format((nberrors_train/train_size)*100))
-print("Test error: {0:.2f}%".format((nberrors_test/test_size)*100))
+train_error = (nberrors_train/train_size)*100
+test_error = (nberrors_test/test_size)*100
+
+train_error_string = "Train error: {0:.2f}%".format(train_error)
+test_error_string = "Test error: {0:.2f}%".format(test_error)
+print(train_error_string)
+print(test_error_string)
+
+outputManager.write(train_error_string,test_error_string,parameters)

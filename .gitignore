@@ -2,3 +2,4 @@ data_bci/
 __pycache__/
 dummy.py
 .DS_Store
+output/

@@ -9,7 +9,6 @@ class Parameter(ABC):
         if (type != "int" and type != "float"):
             raise ValueError("parameter value type not supported")
         self.type = type
-        self.hasSampled = False
         self.size = size
 
     @abstractmethod
@@ -17,19 +16,27 @@ class Parameter(ABC):
         pass
 
     def sample(self):
-        self.hasSampled = True
         self.value = self.doSample()
         if (self.type == "int"):
             self.value = self.value.astype(int)
 
+    def valueToString(self):
+        out = ""
+        for i in range(0, self.size):
+            out += str(self.value[i])
+            if (i != self.size - 1):
+                out += ","
+        return out
+
+    def myDescription(self):
+        myDescription = "";
+        myDescription += "Type = " + self.type + "\n"
+        myDescription += "Size = " + str(self.size) + "\n"
+        myDescription += "Value = " + self.valueToString() + "\n"
+        return myDescription
+
     def showMe(self):
-        print("Type = " + self.type)
-        print("Size = " + str(self.size))
-        if (self.hasSampled):
-            print("Value = ")
-            print(self.value)
-        else:
-            print("Not sampled yet")
+        print(self.myDescription())
 
 class UniformParameter(Parameter):
     def __init__(self, type, size, minValue, maxValue):
@@ -64,6 +71,15 @@ class ParametersSampler():
         for k, v in self.parameters.items():
             print("Parameter = " + k)
             v.showMe()
+
+    def getDescriptions(self):
+        descriptions = "List of parameters:\n===================\n"
+        for k, v in self.parameters.items():
+            descriptions += "Parameter = " + k + "\n"
+            descriptions += v.myDescription()
+            descriptions += "\n"
+
+        return descriptions
 
     def getParameter(self, key):
         param = self.parameters[key]
