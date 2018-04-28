@@ -63,6 +63,35 @@ class MC_DCNNNet(nn.Module):
         x = self.fc3(x)
         return x
 
+# this does not work well
+class MC_DCNNNet_separatechannels(nn.Module):
+    def __init__(self):
+        super(MC_DCNNNet_separatechannels, self).__init__()
+
+        self.conv1 = []
+        self.conv2 = []
+
+        for i in range(0,28):
+            self.conv1 = self.conv1 + [nn.Conv1d(1, 5, kernel_size=6)]
+            self.conv2 = self.conv2 + [nn.Conv1d(5,1, kernel_size=4)]
+
+        self.fc1 = nn.Linear(112, 100)
+        self.fc2 = nn.Linear(100, 50)
+        self.fc3 = nn.Linear(50, 2)
+
+    def forward(self, x):
+        xsize = x.size()
+        y = torch.Tensor(xsize[0],xsize[1],4)
+        for i in range(0,28):
+            xsample = x[:,i,:].unsqueeze(1)
+            xsample = F.relu(F.avg_pool1d(self.conv1[i](xsample), kernel_size=3, stride=3))
+            xsample = F.relu(F.avg_pool1d(self.conv2[i](xsample), kernel_size=3, stride=3))
+            y[:,i,:] = xsample.view(xsize[0],-1)
+        x = F.relu(self.fc1(y.view(-1, 112)))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+
 
 class Net2(nn.Module):
     def __init__(self,hidden1,hidden2):
@@ -208,7 +237,7 @@ train_input, train_target, validation_input, validation_output = create_validati
 hidden1 = 100
 hidden2 = 100
 
-model, criterion = MC_DCNNNet(), nn.CrossEntropyLoss()
+model, criterion = MC_DCNNNet_separatechannels(), nn.CrossEntropyLoss()
 model.apply(init_weights)
 
 eta, mini_batch_size = 1e-1, 79
