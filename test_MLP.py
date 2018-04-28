@@ -7,7 +7,7 @@ from torch.nn import functional as F
 
 import random
 
-torch.manual_seed(np.random.randint(0,100000))
+#torch.manual_seed(np.random.randint(0,100000))
 
 train_input, train_target, test_input, test_target = loader.load_data()
 
@@ -71,29 +71,44 @@ def compute_nb_errors(model, input, target):
 
     return nberrors
 
-def train_model(model, train_input, train_target, validation_input, validation_target, mini_batch_size):
+def train_model(model, train_input, train_target, validation_input, validation_target, eta, mini_batch_size):
     initial_mini_batch_size = mini_batch_size
 
     train_size = train_input.size(0)
     validation_size = validation_input.size()
 
-    n_epochs = 200
+    n_epochs = 1000
+
+    optimizer = torch.optim.SGD(model.parameters(), lr = eta)
+    scheduler = adaptive_time_step(optimizer)
+
+    penalty_parameter_2 = 0.001
+    penalty_parameter_1 = 0.0025
 
     for e in range(0, n_epochs):
         mini_batch_size = initial_mini_batch_size
         sum_loss = 0
         # We do this with mini-batches
         for b in range(0, train_input.size(0), mini_batch_size):
+
             mini_batch_size = min(mini_batch_size, train_input.size(0) - b)
             output = model.forward(train_input.narrow(0, b, mini_batch_size))
             train_target_narrowed = train_target.narrow(0, b, mini_batch_size).long()
 
             loss = criterion(output, train_target_narrowed)
+            l2_penalty = l2_regularization(model.parameters(),penalty_parameter_2)
+            l1_penalty = l1_regularization(model.parameters(),penalty_parameter_1)
+
+            loss += l2_penalty+l1_penalty
+
+            scheduler.step(loss)
+
             sum_loss = sum_loss + loss.data[0]
             model.zero_grad()
             loss.backward()
-            for p in model.parameters():
-                p.data.sub_(eta * p.grad.data)
+            optimizer.step()
+            #for p in model.parameters():
+            #    p.data.sub_(eta * p.grad.data)
 
         train_error = compute_nb_errors(model,train_input, train_target)
         print("Epoch = {0:d}".format(e))
@@ -102,6 +117,45 @@ def train_model(model, train_input, train_target, validation_input, validation_t
         if validation_size:
             validation_error = compute_nb_errors(model,validation_input, validation_target)
             print("Validation error: {0:.2f}%".format((validation_error/validation_size[0])*100))
+
+def l2_regularization(parameters,penalty_parameter):
+    # See Book (pg.116,Chapter 5)
+    penalty_term = 0
+    for p in parameters:
+       penalty_term += penalty_parameter*p.pow(2).sum()
+    return penalty_term
+
+def l1_regularization(parameters,penalty_parameter):
+    # See Book (pg.116,Chapter 5)
+    penalty_term = 0
+    for p in parameters:
+       penalty_term += penalty_parameter*abs(p).sum()
+    return penalty_term
+
+def init_weights(layer):
+    if type(layer) == nn.Linear:
+        torch.nn.init.xavier_uniform(layer.weight)
+
+def adaptive_time_step(optimizer):
+    # See http://pytorch.org/docs/master/optim.html#how-to-adjust-learning-rate
+    # Section "How to adjust Learning Rate"
+
+    # Lambda LR
+    # Step LR
+    #step_size = 50
+    #gamma = 0.95
+    #last_epoch = -1
+    #scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size, gamma, last_epoch)
+
+    # Exponential LR
+    #gamma = 0.99
+    #last_epoch = -1
+    #scheduler =  torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma, last_epoch)
+
+    # ReduceLR on Plateau
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min')
+
+    return scheduler
 
 def create_validation(train_input, train_output, percentage):
     samples = train_input.size(0)
@@ -131,10 +185,11 @@ hidden1 = 100
 hidden2 = 100
 # model, criterion = Net(hidden1), nn.MSELoss()
 model, criterion = Net(hidden1), nn.CrossEntropyLoss()
+model.apply(init_weights)
 
 eta, mini_batch_size = 1e-1, 79
 
-train_model(model, train_input, train_target, validation_input, validation_output, mini_batch_size)
+train_model(model, train_input, train_target, validation_input, validation_output, eta, mini_batch_size)
 nberrors_train = compute_nb_errors(model,train_input, train_target)
 nberrors_test = compute_nb_errors(model,test_input, test_target)
 
