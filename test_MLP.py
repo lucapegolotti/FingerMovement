@@ -20,32 +20,6 @@ test_size = test_input.size(0)
 # train_input = train_input.view(316,1400).squeeze(1)
 # test_input = test_input.view(100,1400).squeeze(1)
 
-
-class Net(nn.Module):
-    def __init__(self,hidden):
-        super(Net, self).__init__()
-        self.conv1 = nn.Conv1d(28, 28, kernel_size=5, padding=2)
-        self.conv2 = nn.Conv1d(28, 28, kernel_size=3, padding=1)
-        self.fc_pos = nn.Linear(1400, 40);
-        self.fc_vel = nn.Linear(1400, 40)
-        self.fc_acc = nn.Linear(1400, 40)
-        self.fc_sum = nn.Linear(40, 28)
-        self.fc_final = nn.Linear(28,2)
-
-    def forward(self, x):
-        v = F.relu(F.max_pool1d(self.conv1(x), kernel_size=1, stride=1))
-        a = F.relu(F.max_pool1d(self.conv2(v), kernel_size=1, stride=1))
-
-        x = F.relu(self.fc_pos(x.view(-1, 1400)))
-        v = F.relu(self.fc_vel(v.view(-1, 1400)))
-        a = F.relu(self.fc_acc(a.view(-1, 1400)))
-
-        sum = x + v + a
-        sum = F.sigmoid(self.fc_sum(sum))
-
-        res = self.fc_final(sum)
-        return res
-
 class MC_DCNNNet(nn.Module):
     def __init__(self):
         super(MC_DCNNNet, self).__init__()
@@ -54,34 +28,25 @@ class MC_DCNNNet(nn.Module):
         self.fc1 = nn.Linear(256, 100)
         self.fc2 = nn.Linear(100, 50)
         self.fc3 = nn.Linear(50, 2)
+        self.drop = nn.Dropout(p = 0.1)
+        self.leakyRelu = nn.LeakyReLU(0.1)
 
     def forward(self, x):
-        x = F.relu(F.avg_pool1d(self.conv1(x), kernel_size=3, stride=3))
-        x = F.relu(F.avg_pool1d(self.conv2(x), kernel_size=3, stride=3))
-        x = F.relu(self.fc1(x.view(-1, 256)))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
-        return x
-
-
-class Net2(nn.Module):
-    def __init__(self,hidden1,hidden2):
-        super(Net2, self).__init__()
-        self.conv1 = nn.Conv1d(28, 32, kernel_size=3)
-        self.conv2 = nn.Conv1d(32, 64, kernel_size=3)
-        self.fc1 = nn.Linear(448, 100)
-        self.fc3 = nn.Linear(hidden2, 2)
-
-    def forward(self, x):
-        x = F.relu(F.max_pool1d(self.conv1(x), kernel_size=3, stride=3))
-        x = F.relu(F.max_pool1d(self.conv2(x), kernel_size=2, stride=2))
-        x = F.relu(F.max_pool1d(self.conv3(x), kernel_size=5, stride=5))
-        x = F.relu(self.fc1(x.view(-1, 128)))
-        x = self.fc2(x)
+        #x = F.relu(F.avg_pool1d(self.conv1(x), kernel_size=3, stride=3))
+        #x = F.relu(F.avg_pool1d(self.conv2(x), kernel_size=3, stride=3))
+        #x = F.relu(self.fc1(x.view(-1, 256)))
+        x = self.leakyRelu(F.avg_pool1d(self.conv1(x), kernel_size=3, stride=3))
+        x = self.leakyRelu(F.avg_pool1d(self.conv2(x), kernel_size=3, stride=3))
+        x = self.leakyRelu(self.fc1(x.view(-1, 256)))
+        x = self.drop(x)
+        x = self.leakyRelu(self.fc2(x))
+        #x = F.relu(self.fc2(x))
+        x = self.drop(x)
         x = self.fc3(x)
         return x
 
 def compute_nb_errors(model, input, target):
+    model.train(False)
     y = model.forward(input)
     indicesy = np.argmax(y.data,1).float()
 
@@ -97,15 +62,14 @@ def train_model(model, train_input, train_target, validation_input, validation_t
     test_size = test_input.size(0)
     validation_size = validation_input.size()
 
-    print(validation_size[0])
+    n_epochs = 400
 
-    n_epochs = 1000
-
-    optimizer = torch.optim.SGD(model.parameters(), lr = eta)
+    momentum_param = 0.0
+    optimizer = torch.optim.SGD(model.parameters(), lr = eta, momentum = momentum_param )
     scheduler = adaptive_time_step(optimizer)
 
     penalty_parameter_2 = 0.001
-    penalty_parameter_1 = 0.0025
+    penalty_parameter_1 = 0.001
 
     for e in range(0, n_epochs):
         mini_batch_size = initial_mini_batch_size
@@ -114,6 +78,7 @@ def train_model(model, train_input, train_target, validation_input, validation_t
         for b in range(0, train_input.size(0), mini_batch_size):
 
             mini_batch_size = min(mini_batch_size, train_input.size(0) - b)
+            model.train(True)
             output = model.forward(train_input.narrow(0, b, mini_batch_size))
             train_target_narrowed = train_target.narrow(0, b, mini_batch_size).long()
 
@@ -157,8 +122,9 @@ def l1_regularization(parameters,penalty_parameter):
     return penalty_term
 
 def init_weights(layer):
-    if type(layer) == nn.Linear:
+    if (type(layer) == nn.Linear) or (type(layer) == nn.Conv1d):
         torch.nn.init.xavier_uniform(layer.weight)
+        layer.bias.data.uniform_(0)
 
 def adaptive_time_step(optimizer):
     # See http://pytorch.org/docs/master/optim.html#how-to-adjust-learning-rate
