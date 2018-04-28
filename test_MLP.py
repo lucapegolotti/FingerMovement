@@ -46,6 +46,24 @@ class Net(nn.Module):
         res = self.fc_final(sum)
         return res
 
+class MC_DCNNNet(nn.Module):
+    def __init__(self):
+        super(MC_DCNNNet, self).__init__()
+        self.conv1 = nn.Conv1d(28, 64, kernel_size=6)
+        self.conv2 = nn.Conv1d(64, 64, kernel_size=4)
+        self.fc1 = nn.Linear(256, 100)
+        self.fc2 = nn.Linear(100, 50)
+        self.fc3 = nn.Linear(50, 2)
+
+    def forward(self, x):
+        x = F.relu(F.avg_pool1d(self.conv1(x), kernel_size=3, stride=3))
+        x = F.relu(F.avg_pool1d(self.conv2(x), kernel_size=3, stride=3))
+        x = F.relu(self.fc1(x.view(-1, 256)))
+        x = F.sigmoid(self.fc2(x))
+        x = self.fc3(x)
+        return x
+
+
 class Net2(nn.Module):
     def __init__(self,hidden1,hidden2):
         super(Net2, self).__init__()
@@ -71,13 +89,14 @@ def compute_nb_errors(model, input, target):
 
     return nberrors
 
-def train_model(model, train_input, train_target, validation_input, validation_target, mini_batch_size):
+def train_model(model, train_input, train_target, validation_input, validation_target, test_input, test_target, mini_batch_size):
     initial_mini_batch_size = mini_batch_size
 
     train_size = train_input.size(0)
+    test_size = test_input.size(0)
     validation_size = validation_input.size()
 
-    n_epochs = 200
+    n_epochs = 500
 
     for e in range(0, n_epochs):
         mini_batch_size = initial_mini_batch_size
@@ -96,9 +115,11 @@ def train_model(model, train_input, train_target, validation_input, validation_t
                 p.data.sub_(eta * p.grad.data)
 
         train_error = compute_nb_errors(model,train_input, train_target)
+        test_error = compute_nb_errors(model,test_input, test_target)
         print("Epoch = {0:d}".format(e))
         print("Loss function = {0:.8f}".format(sum_loss))
         print("Train error: {0:.2f}%".format((train_error/train_size)*100))
+        print("Test error: {0:.2f}%".format((test_error/test_size)*100))
         if validation_size:
             validation_error = compute_nb_errors(model,validation_input, validation_target)
             print("Validation error: {0:.2f}%".format((validation_error/validation_size[0])*100))
@@ -130,11 +151,11 @@ train_input, train_target, validation_input, validation_output = create_validati
 hidden1 = 100
 hidden2 = 100
 # model, criterion = Net(hidden1), nn.MSELoss()
-model, criterion = Net(hidden1), nn.CrossEntropyLoss()
+model, criterion = MC_DCNNNet(), nn.CrossEntropyLoss()
 
 eta, mini_batch_size = 1e-1, 79
 
-train_model(model, train_input, train_target, validation_input, validation_output, mini_batch_size)
+train_model(model, train_input, train_target, validation_input, validation_output, test_input, test_target, mini_batch_size)
 nberrors_train = compute_nb_errors(model,train_input, train_target)
 nberrors_test = compute_nb_errors(model,test_input, test_target)
 

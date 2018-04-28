@@ -16,7 +16,7 @@ def load_data():
     train_samples = train_input.size(0)
     test_samples = test_input.size(0)
     channels = train_input.size(1)
-    
+
     for i in range(0,channels):
         me = torch.mean(train_input[:,i,:])
         std = torch.std(train_input[:,i,:])
