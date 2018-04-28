@@ -97,6 +97,8 @@ def train_model(model, train_input, train_target, validation_input, validation_t
     test_size = test_input.size(0)
     validation_size = validation_input.size()
 
+    print(validation_size[0])
+
     n_epochs = 1000
 
     optimizer = torch.optim.SGD(model.parameters(), lr = eta)
@@ -136,7 +138,7 @@ def train_model(model, train_input, train_target, validation_input, validation_t
         print("Loss function = {0:.8f}".format(sum_loss))
         print("Train error: {0:.2f}%".format((train_error/train_size)*100))
         print("Test error: {0:.2f}%".format((test_error/test_size)*100))
-        if validation_size:
+        if validation_size[0] is not 0:
             validation_error = compute_nb_errors(model,validation_input, validation_target)
             print("Validation error: {0:.2f}%".format((validation_error/validation_size[0])*100))
 
@@ -201,7 +203,7 @@ def create_validation(train_input, train_output, percentage):
 train_input, train_target = Variable(train_input), Variable(train_target)
 test_input, test_target = Variable(test_input), Variable(test_target)
 
-train_input, train_target, validation_input, validation_output = create_validation(train_input, train_target, 0.001)
+train_input, train_target, validation_input, validation_output = create_validation(train_input, train_target, 0)
 
 hidden1 = 100
 hidden2 = 100
