@@ -1,5 +1,7 @@
 import torch
 import loader
+from parameters_sampler import ParametersSampler
+
 import numpy as np
 from torch.autograd import Variable
 from torch import nn
@@ -7,7 +9,10 @@ from torch.nn import functional as F
 
 import random
 
-#torch.manual_seed(np.random.randint(0,100000))
+torch.manual_seed(np.random.randint(0,100000))
+
+parameters = ParametersSampler()
+parameters.showMe()
 
 train_input, train_target, test_input, test_target = loader.load_data()
 
@@ -19,7 +24,6 @@ test_size = test_input.size(0)
 #
 # train_input = train_input.view(316,1400).squeeze(1)
 # test_input = test_input.view(100,1400).squeeze(1)
-
 
 class Net(nn.Module):
     def __init__(self,hidden):
@@ -126,9 +130,7 @@ def train_model(model, train_input, train_target, validation_input, validation_t
     test_size = test_input.size(0)
     validation_size = validation_input.size()
 
-    print(validation_size[0])
-
-    n_epochs = 1000
+    n_epochs = parameters.getParameter('epochs')
 
     optimizer = torch.optim.SGD(model.parameters(), lr = eta)
     scheduler = adaptive_time_step(optimizer)
@@ -237,11 +239,10 @@ train_input, train_target, validation_input, validation_output = create_validati
 hidden1 = 100
 hidden2 = 100
 
-model, criterion = MC_DCNNNet_separatechannels(), nn.CrossEntropyLoss()
+model, criterion = MC_DCNNNet(), nn.CrossEntropyLoss()
 model.apply(init_weights)
 
-eta, mini_batch_size = 1e-1, 79
-
+eta, mini_batch_size = parameters.getParameter('eta'), parameters.getParameter('batch_size')
 train_model(model, train_input, train_target, validation_input, validation_output, test_input, test_target, eta, mini_batch_size)
 
 nberrors_train = compute_nb_errors(model,train_input, train_target)

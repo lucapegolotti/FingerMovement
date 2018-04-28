@@ -5,13 +5,7 @@ import numpy
 def load_data():
     train_input, train_target = bci.load(root='./data_bci')
 
-    print(str(type(train_input)),train_input.size())
-    print(str(type(train_target)),train_target.size())
-
     test_input, test_target = bci.load(root='./data_bci',train=False)
-
-    print(str(type(test_input)),test_input.size())
-    print(str(type(test_target)),test_target.size())
 
     train_samples = train_input.size(0)
     test_samples = test_input.size(0)
