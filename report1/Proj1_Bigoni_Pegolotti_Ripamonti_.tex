@@ -58,21 +58,57 @@
 %\tableofcontents
 %\newpage
 
+
+
 % \small{\textsuperscript{a}EPFL-SB-MATH-MCSS, \textsuperscript{b}EPFL-SB-MATH-DIV}
 
 
-\section{Goal}
+\section{Introduction}
+ 
+ 
+ Visualisation of data: one sample (for all 28 channels or only few) for target = 0 and one sample for target 1
+ + Same for mean and std (Luca)
+ 
+ - Linear Perceptron --  Error train vs. test when overfitting 
+ 
+ 
+ - Cross Validation (how many?)
+ 
+ - Each model is averaged over N times 
+ 
+ \section{Models we tried and why they don't work}
+
+ 
+ - 2 Conv 1D + 3 linear 
+ 
+ - Conv only in the direction of the channels \cite{zheng2014time}
+ 
+ - Conv with "images", i.e. Conv 2D asymmetric (only in one direction) \cite{schirrmeister2017deep}
+ 
+ - All of them with Data Augmentation + white random noise \cite{wang2018data}
+ 
+ -  adaptive eta in gradient descent 
+ 
+ - L1 and L2 Regularization \cite{goodfellow2016deep} 
+ 
+ - dropout 
+ 
+ 
+ 
+  \section{Model that works best}
+ 
+ it doesnt overfit + graph
+ 
+ 
+ Hyperparameters 
+ 
  
  
  % References
- %
- \renewcommand\refname{\vskip -1cm}
-%\section{References}
-%\bibliographystyle{abbrv}
-%\bibliography{mybib}
-%
 \section{References}
-\bibliographystyle{spmpsci}      % mathematics and physical sciences
+\bibliographystyle{alpha}
 \bibliography{mybib_dl} 
+  
+  
   
 \end{document}
