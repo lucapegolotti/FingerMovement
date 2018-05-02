@@ -56,6 +56,27 @@ class Net(nn.Module):
 class MC_DCNNNet(nn.Module):
     def __init__(self):
         super(MC_DCNNNet, self).__init__()
+        self.conv1 = nn.Conv2d(1, 10, kernel_size=(1,6))
+        self.conv2 = nn.Conv2d(10, 20, kernel_size=(1,4))
+        self.fc1 = nn.Linear(2240, 100)
+        self.fc2 = nn.Linear(100, 50)
+        self.fc3 = nn.Linear(50, 2)
+
+    def forward(self, x):
+        dim1 = x.size(0)
+        dim2 = x.size(1)
+        dim3 = x.size(2)
+        x = x.unsqueeze(1)
+        x = F.relu(F.avg_pool2d(self.conv1(x),kernel_size=(1,3)))
+        x = F.relu(F.avg_pool2d(self.conv2(x),kernel_size=(1,3)))
+        x = F.relu(self.fc1(x.view(-1, 2240)))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+
+class MC_DCNNNet(nn.Module):
+    def __init__(self):
+        super(MC_DCNNNet, self).__init__()
         self.conv1 = nn.Conv1d(28, 64, kernel_size=6)
         self.conv2 = nn.Conv1d(64, 64, kernel_size=4)
         self.fc1 = nn.Linear(256, 100)
@@ -245,7 +266,7 @@ hidden2 = 100
 model, criterion = MC_DCNNNet(), nn.CrossEntropyLoss()
 model.apply(init_weights)
 
-eta, mini_batch_size = parameters.getParameter('eta'), parameters.getParameter('batch_size')
+eta, mini_batch_size = 1e-1, 79
 train_model(model, train_input, train_target, validation_input, validation_output, test_input, test_target, eta, mini_batch_size)
 
 nberrors_train = compute_nb_errors(model,train_input, train_target)
