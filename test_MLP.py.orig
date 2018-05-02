@@ -4,59 +4,135 @@ from parameters_sampler import ParametersSampler
 from output_manager import OutputManager
 
 import numpy as np
-from torch.autograd import Variable 
+from torch.autograd import Variable
 from torch import nn
 from torch.nn import functional as F
 
 import random
 
+torch.manual_seed(np.random.randint(0,100000))
+
+parameters = ParametersSampler()
+parameters.showMe()
+
+outputManager = OutputManager()
+
+train_input, train_target, test_input, test_target = loader.load_data()
+
+train_target = train_target.type(torch.FloatTensor)
+test_target = test_target.type(torch.FloatTensor)
+
+train_size = train_target.size(0)
+test_size = test_input.size(0)
 #
 # train_input = train_input.view(316,1400).squeeze(1)
 # test_input = test_input.view(100,1400).squeeze(1)
 
-
-
-#score = Variable(torch.randn(10,2))
-#target = Variable((torch.rand(10)>0.5).long())
-#lfn1 = torch.nn.CrossEntropyLoss()
-#lfn2 = torch.nn.BCELoss()
-#m = torch.nn.Softmax()
-#print(lfn1(score,target), lfn2(torch.nn.Softmax(score),target.float()))
-#print(score)
-#print(m(score))
-#print(target)
-#print(lfn1(score,target))
-#print(lfn2(m(score)[:,1],target.float()))
-
-
-
-class MC_DCNNNet(nn.Module):
-    def __init__(self,parameters):
-        super(MC_DCNNNet, self).__init__()
-        self.conv1 = nn.Conv1d(28, 224, kernel_size=6, groups=28, bias=True)
-        self.conv2 = nn.Conv1d(224, 112, kernel_size=4, groups=28, bias=True)
-        self.fc1 = nn.Linear(4704, parameters.getParameter('hidden1'))
-        self.fc2 = nn.Linear(parameters.getParameter('hidden1'), parameters.getParameter('hidden2'))
-        self.fc3 = nn.Linear(parameters.getParameter('hidden2'), 2)
-        self.drop = nn.Dropout(p = parameters.getParameter('dropout'))
-        #self.leakyRelu = nn.LeakyReLU(parameters.getParameter('leakyRelu'))
-        self.activation2 = nn.functional.sigmoid
-        self.activation1 = nn.LeakyReLU(parameters.getParameter('leakyRelu'))
+<<<<<<< HEAD
+=======
+class Net(nn.Module):
+    def __init__(self,hidden):
+        super(Net, self).__init__()
+        self.conv1 = nn.Conv1d(28, 28, kernel_size=5, padding=2)
+        self.conv2 = nn.Conv1d(28, 28, kernel_size=3, padding=1)
+        self.fc_pos = nn.Linear(1400, 40);
+        self.fc_vel = nn.Linear(1400, 40)
+        self.fc_acc = nn.Linear(1400, 40)
+        self.fc_sum = nn.Linear(40, 28)
+        self.fc_final = nn.Linear(28,2)
 
     def forward(self, x):
+        v = F.relu(F.max_pool1d(self.conv1(x), kernel_size=1, stride=1))
+        a = F.relu(F.max_pool1d(self.conv2(v), kernel_size=1, stride=1))
+
+        x = F.relu(self.fc_pos(x.view(-1, 1400)))
+        v = F.relu(self.fc_vel(v.view(-1, 1400)))
+        a = F.relu(self.fc_acc(a.view(-1, 1400)))
+
+        sum = x + v + a
+        sum = F.sigmoid(self.fc_sum(sum))
+
+        res = self.fc_final(sum)
+        return res
+
+>>>>>>> 43b35c7e923637e88ba31ff85cb35eade4315b7e
+class MC_DCNNNet(nn.Module):
+    def __init__(self):
+        super(MC_DCNNNet, self).__init__()
+        self.conv1 = nn.Conv1d(28, 64, kernel_size=6)
+        self.conv2 = nn.Conv1d(64, 64, kernel_size=4)
+        self.fc1 = nn.Linear(256, 100)
+        self.fc2 = nn.Linear(100, 50)
+        self.fc3 = nn.Linear(50, 2)
+        self.drop = nn.Dropout(p = 0.1)
+        self.leakyRelu = nn.LeakyReLU(0.1)
+
+    def forward(self, x):
+<<<<<<< HEAD
         #x = F.relu(F.avg_pool1d(self.conv1(x), kernel_size=3, stride=3))
         #x = F.relu(F.avg_pool1d(self.conv2(x), kernel_size=3, stride=3))
         #x = F.relu(self.fc1(x.view(-1, 256)))
-        #x = F.avg_pool1d(self.activation(self.conv1(x)), kernel_size=2, stride=2) # same as below but without pooling
-        #x = F.avg_pool1d(self.activation(self.conv2(x)), kernel_size=2, stride=2)
-        x = self.activation1(self.conv1(x)) 
-        x = self.activation1(self.conv2(x))
-        x = self.activation1(self.fc1(x.view(-1, 4704)))
-        #x = self.drop(x)
-        x = self.activation1(self.fc2(x))
-        x = self.fc3(x)
+        x = self.leakyRelu(F.avg_pool1d(self.conv1(x), kernel_size=3, stride=3))
+        x = self.leakyRelu(F.avg_pool1d(self.conv2(x), kernel_size=3, stride=3))
+        x = self.leakyRelu(self.fc1(x.view(-1, 256)))
+        x = self.drop(x)
+        x = self.leakyRelu(self.fc2(x))
         #x = F.relu(self.fc2(x))
-        #x = self.drop(x)
+        x = self.drop(x)
+=======
+        x = F.relu(F.avg_pool1d(self.conv1(x), kernel_size=3, stride=3))
+        x = F.relu(F.avg_pool1d(self.conv2(x), kernel_size=3, stride=3))
+        x = F.relu(self.fc1(x.view(-1, 256)))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+
+# this does not work well
+class MC_DCNNNet_separatechannels(nn.Module):
+    def __init__(self):
+        super(MC_DCNNNet_separatechannels, self).__init__()
+
+        self.conv1 = []
+        self.conv2 = []
+
+        for i in range(0,28):
+            self.conv1 = self.conv1 + [nn.Conv1d(1, 5, kernel_size=6)]
+            self.conv2 = self.conv2 + [nn.Conv1d(5,1, kernel_size=4)]
+
+        self.fc1 = nn.Linear(112, 100)
+        self.fc2 = nn.Linear(100, 50)
+        self.fc3 = nn.Linear(50, 2)
+
+    def forward(self, x):
+        xsize = x.size()
+        y = torch.Tensor(xsize[0],xsize[1],4)
+        for i in range(0,28):
+            xsample = x[:,i,:].unsqueeze(1)
+            xsample = F.relu(F.avg_pool1d(self.conv1[i](xsample), kernel_size=3, stride=3))
+            xsample = F.relu(F.avg_pool1d(self.conv2[i](xsample), kernel_size=3, stride=3))
+            y[:,i,:] = xsample.view(xsize[0],-1)
+        x = F.relu(self.fc1(y.view(-1, 112)))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+
+
+class Net2(nn.Module):
+    def __init__(self,hidden1,hidden2):
+        super(Net2, self).__init__()
+        self.conv1 = nn.Conv1d(28, 32, kernel_size=3)
+        self.conv2 = nn.Conv1d(32, 64, kernel_size=3)
+        self.fc1 = nn.Linear(448, 100)
+        self.fc3 = nn.Linear(hidden2, 2)
+
+    def forward(self, x):
+        x = F.relu(F.max_pool1d(self.conv1(x), kernel_size=3, stride=3))
+        x = F.relu(F.max_pool1d(self.conv2(x), kernel_size=2, stride=2))
+        x = F.relu(F.max_pool1d(self.conv3(x), kernel_size=5, stride=5))
+        x = F.relu(self.fc1(x.view(-1, 128)))
+        x = self.fc2(x)
+>>>>>>> 43b35c7e923637e88ba31ff85cb35eade4315b7e
+        x = self.fc3(x)
         return x
 
 def compute_nb_errors(model, input, target):
@@ -69,22 +145,25 @@ def compute_nb_errors(model, input, target):
     return nberrors
 
 #def train_model(model, train_input, train_target, validation_input, validation_target, eta, mini_batch_size):
-def train_model(model, train_input, train_target, validation_input, validation_target, test_input, test_target, parameters):
-    initial_mini_batch_size = parameters.getParameter('batch_size')
+def train_model(model, train_input, train_target, validation_input, validation_target, test_input, test_target, eta, mini_batch_size):
+    initial_mini_batch_size = mini_batch_size
 
     train_size = train_input.size(0)
     test_size = test_input.size(0)
     validation_size = validation_input.size()
 
+<<<<<<< HEAD
+    n_epochs = 400
+=======
     n_epochs = parameters.getParameter('epochs')
-    eta = parameters.getParameter('eta')
-    momentum_param = parameters.getParameter('momentum')
+>>>>>>> 43b35c7e923637e88ba31ff85cb35eade4315b7e
 
+    momentum_param = 0.0
     optimizer = torch.optim.SGD(model.parameters(), lr = eta, momentum = momentum_param )
     scheduler = adaptive_time_step(optimizer)
 
-    penalty_parameter_2 = parameters.getParameter('l2_penalization')
-    penalty_parameter_1 = parameters.getParameter('l1_penalization')
+    penalty_parameter_2 = 0.001
+    penalty_parameter_1 = 0.001
 
     for e in range(0, n_epochs):
         mini_batch_size = initial_mini_batch_size
@@ -97,9 +176,6 @@ def train_model(model, train_input, train_target, validation_input, validation_t
             output = model.forward(train_input.narrow(0, b, mini_batch_size))
             train_target_narrowed = train_target.narrow(0, b, mini_batch_size).long()
 
-            #print(output)
-            #print(train_target_narrowed)
-            
             loss = criterion(output, train_target_narrowed)
             l2_penalty = l2_regularization(model.parameters(),penalty_parameter_2)
             l1_penalty = l1_regularization(model.parameters(),penalty_parameter_1)
@@ -107,13 +183,10 @@ def train_model(model, train_input, train_target, validation_input, validation_t
             loss += l2_penalty+l1_penalty
 
             scheduler.step(loss)
-            #scheduler.step()
 
             sum_loss = sum_loss + loss.data[0]
             model.zero_grad()
-
             loss.backward()
-            
             optimizer.step()
             #for p in model.parameters():
             #    p.data.sub_(eta * p.grad.data)
@@ -143,11 +216,8 @@ def l1_regularization(parameters,penalty_parameter):
     return penalty_term
 
 def init_weights(layer):
-    if (type(layer) == nn.Linear):
-        torch.nn.init.xavier_uniform_(layer.weight)
-        layer.bias.data.uniform_(0)
-    if (type(layer) == nn.Conv1d):
-        torch.nn.init.xavier_uniform_(layer.weight)
+    if (type(layer) == nn.Linear) or (type(layer) == nn.Conv1d):
+        torch.nn.init.xavier_uniform(layer.weight)
         layer.bias.data.uniform_(0)
 
 def adaptive_time_step(optimizer):
@@ -190,31 +260,19 @@ def create_validation(train_input, train_output, percentage):
     return train_input, train_output, validation_input, validation_output
 
 
-torch.manual_seed(np.random.randint(0,100000))
-
-parameters = ParametersSampler()
-parameters.showMe()
-
-outputManager = OutputManager()
-
-train_input, train_target, test_input, test_target = loader.load_data()
-
-train_target = train_target.type(torch.FloatTensor)
-test_target = test_target.type(torch.FloatTensor)
-
-train_size = train_target.size(0)
-test_size = test_input.size(0)
-
 train_input, train_target = Variable(train_input), Variable(train_target)
 test_input, test_target = Variable(test_input), Variable(test_target)
 
 train_input, train_target, validation_input, validation_output = create_validation(train_input, train_target, 0)
 
-model, criterion = MC_DCNNNet(parameters), nn.CrossEntropyLoss()
+hidden1 = 100
+hidden2 = 100
+
+model, criterion = MC_DCNNNet(), nn.CrossEntropyLoss()
 model.apply(init_weights)
 
-#eta, mini_batch_size = parameters.getParameter('eta'), parameters.getParameter('batch_size')
-train_model(model, train_input, train_target, validation_input, validation_output, test_input, test_target, parameters)
+eta, mini_batch_size = parameters.getParameter('eta'), parameters.getParameter('batch_size')
+train_model(model, train_input, train_target, validation_input, validation_output, test_input, test_target, eta, mini_batch_size)
 
 nberrors_train = compute_nb_errors(model,train_input, train_target)
 nberrors_test = compute_nb_errors(model,test_input, test_target)
