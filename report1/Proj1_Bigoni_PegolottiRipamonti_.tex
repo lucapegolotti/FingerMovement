@@ -1,0 +1,78 @@
+\documentclass{article}
+
+
+\usepackage[left=3cm,right=3cm,top=2cm,bottom=3cm]{geometry} % page settings
+\usepackage{amsmath,amsfonts,amsthm,amssymb} % provides many mathematical environments & tools
+
+
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning}
+\usetikzlibrary{mindmap,trees, backgrounds}
+\usetikzlibrary{decorations.pathreplacing}
+
+
+\tikzset{block/.style={rectangle, draw, text width=10em, text centered, rounded corners,
+ minimum width=3.5cm}}
+ \tikzset{blockL/.style={rectangle, draw, text width=14em, text centered, rounded corners,
+ minimum width=3.5cm}}
+\tikzset{block_color/.style={rectangle, draw, fill=BurntOrange!65, text width=10em, text centered, rounded corners,
+ minimum width=3.5cm}}
+ \tikzset{line/.style={draw, -latex}}
+ 
+ \definecolor{green_m}{rgb}{0.0, 0.66, 0.47}
+ 
+ 
+\usepackage{adjustbox}
+
+\usepackage{bigints}
+\usepackage{hyperref}
+\newcommand{\lver}{\left|}
+\newcommand{\rver}{\right|}
+\newcommand{\bsy}[1]{\boldsymbol{#1}}
+
+\usepackage{hyperref}
+\hypersetup{%
+  colorlinks=false,% hyperlinks will be black
+  linkbordercolor=black,% hyperlink borders will be red
+  pdfborderstyle={/S/U/W 1}% border style will be underline of width 1pt
+}
+
+\usepackage[outdir=./]{epstopdf}
+
+
+% hyperref
+\usepackage[]{hyperref}
+
+% color box
+%\newcommand{\boxcolor}{orange}
+\makeatletter
+\renewcommand{\boxed}[2]{\textcolor{#2}{%
+\tikz[baseline={([yshift=-1ex]current bounding box.center)}] \node [thick, rectangle, minimum width=1ex,rounded corners,draw] {\normalcolor\m@th$\displaystyle#1$};}}
+ \makeatother
+\begin{document}
+
+\title{Deep Learning Mini-project 1 report \\ Prediction of finger movements from EEG recordings}
+\author{Caterina Bigoni\textsuperscript{a}, Luca Pegolotti\textsuperscript{b} and Nicol\`o Ripamonti\textsuperscript{a}}
+\date{18 May 2018}
+\maketitle
+%\tableofcontents
+%\newpage
+
+% \small{\textsuperscript{a}EPFL-SB-MATH-MCSS, \textsuperscript{b}EPFL-SB-MATH-DIV}
+
+
+\section{Goal}
+ 
+ 
+ % References
+ %
+ \renewcommand\refname{\vskip -1cm}
+%\section{References}
+%\bibliographystyle{abbrv}
+%\bibliography{mybib}
+%
+\section{References}
+\bibliographystyle{spmpsci}      % mathematics and physical sciences
+\bibliography{mybib_dl} 
+  
+\end{document}
