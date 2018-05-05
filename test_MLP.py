@@ -1,5 +1,5 @@
 import torch
-import loader
+import loader as loader
 from parameters_sampler import ParametersSampler
 from output_manager import OutputManager
 
@@ -8,135 +8,24 @@ from torch.autograd import Variable
 from torch import nn
 from torch.nn import functional as F
 
+import models as models
+
 import random
 
 torch.manual_seed(np.random.randint(0,100000))
 
-parameters = ParametersSampler()
-parameters.showMe()
+# parameters = ParametersSampler()
+# parameters.showMe()
 
 outputManager = OutputManager()
 
-train_input, train_target, test_input, test_target = loader.load_data()
+train_input, train_target, test_input, test_target = loader.load_data(data_aug=True)
 
 train_target = train_target.type(torch.FloatTensor)
 test_target = test_target.type(torch.FloatTensor)
 
 train_size = train_target.size(0)
 test_size = test_input.size(0)
-#
-# train_input = train_input.view(316,1400).squeeze(1)
-# test_input = test_input.view(100,1400).squeeze(1)
-
-class Net(nn.Module):
-    def __init__(self,hidden):
-        super(Net, self).__init__()
-        self.conv1 = nn.Conv1d(28, 28, kernel_size=5, padding=2)
-        self.conv2 = nn.Conv1d(28, 28, kernel_size=3, padding=1)
-        self.fc_pos = nn.Linear(1400, 40);
-        self.fc_vel = nn.Linear(1400, 40)
-        self.fc_acc = nn.Linear(1400, 40)
-        self.fc_sum = nn.Linear(40, 28)
-        self.fc_final = nn.Linear(28,2)
-
-    def forward(self, x):
-        v = F.relu(F.max_pool1d(self.conv1(x), kernel_size=1, stride=1))
-        a = F.relu(F.max_pool1d(self.conv2(v), kernel_size=1, stride=1))
-
-        x = F.relu(self.fc_pos(x.view(-1, 1400)))
-        v = F.relu(self.fc_vel(v.view(-1, 1400)))
-        a = F.relu(self.fc_acc(a.view(-1, 1400)))
-
-        sum = x + v + a
-        sum = F.sigmoid(self.fc_sum(sum))
-
-        res = self.fc_final(sum)
-        return res
-
-class MC_DCNNNet(nn.Module):
-    def __init__(self):
-        super(MC_DCNNNet, self).__init__()
-        self.conv1 = nn.Conv2d(1, 10, kernel_size=(1,6))
-        self.conv2 = nn.Conv2d(10, 20, kernel_size=(1,4))
-        self.fc1 = nn.Linear(2240, 100)
-        self.fc2 = nn.Linear(100, 50)
-        self.fc3 = nn.Linear(50, 2)
-
-    def forward(self, x):
-        dim1 = x.size(0)
-        dim2 = x.size(1)
-        dim3 = x.size(2)
-        x = x.unsqueeze(1)
-        x = F.relu(F.avg_pool2d(self.conv1(x),kernel_size=(1,3)))
-        x = F.relu(F.avg_pool2d(self.conv2(x),kernel_size=(1,3)))
-        x = F.relu(self.fc1(x.view(-1, 2240)))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
-        return x
-
-class MC_DCNNNet(nn.Module):
-    def __init__(self):
-        super(MC_DCNNNet, self).__init__()
-        self.conv1 = nn.Conv1d(28, 64, kernel_size=6)
-        self.conv2 = nn.Conv1d(64, 64, kernel_size=4)
-        self.fc1 = nn.Linear(256, 100)
-        self.fc2 = nn.Linear(100, 50)
-        self.fc3 = nn.Linear(50, 2)
-
-    def forward(self, x):
-        x = F.relu(F.avg_pool1d(self.conv1(x), kernel_size=3, stride=3))
-        x = F.relu(F.avg_pool1d(self.conv2(x), kernel_size=3, stride=3))
-        x = F.relu(self.fc1(x.view(-1, 256)))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
-        return x
-
-# this does not work well
-class MC_DCNNNet_separatechannels(nn.Module):
-    def __init__(self):
-        super(MC_DCNNNet_separatechannels, self).__init__()
-
-        self.conv1 = []
-        self.conv2 = []
-
-        for i in range(0,28):
-            self.conv1 = self.conv1 + [nn.Conv1d(1, 5, kernel_size=6)]
-            self.conv2 = self.conv2 + [nn.Conv1d(5,1, kernel_size=4)]
-
-        self.fc1 = nn.Linear(112, 100)
-        self.fc2 = nn.Linear(100, 50)
-        self.fc3 = nn.Linear(50, 2)
-
-    def forward(self, x):
-        xsize = x.size()
-        y = torch.Tensor(xsize[0],xsize[1],4)
-        for i in range(0,28):
-            xsample = x[:,i,:].unsqueeze(1)
-            xsample = F.relu(F.avg_pool1d(self.conv1[i](xsample), kernel_size=3, stride=3))
-            xsample = F.relu(F.avg_pool1d(self.conv2[i](xsample), kernel_size=3, stride=3))
-            y[:,i,:] = xsample.view(xsize[0],-1)
-        x = F.relu(self.fc1(y.view(-1, 112)))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
-        return x
-
-
-class Net2(nn.Module):
-    def __init__(self,hidden1,hidden2):
-        super(Net2, self).__init__()
-        self.conv1 = nn.Conv1d(28, 32, kernel_size=3)
-        self.conv2 = nn.Conv1d(32, 64, kernel_size=3)
-        self.fc1 = nn.Linear(448, 100)
-        self.fc3 = nn.Linear(hidden2, 2)
-
-    def forward(self, x):
-        x = F.relu(F.max_pool1d(self.conv1(x), kernel_size=3, stride=3))
-        x = F.relu(F.max_pool1d(self.conv2(x), kernel_size=2, stride=2))
-        x = F.relu(F.max_pool1d(self.conv3(x), kernel_size=5, stride=5))
-        x = F.relu(self.fc1(x.view(-1, 128)))
-        x = self.fc2(x)
-        x = self.fc3(x)
-        return x
 
 def compute_nb_errors(model, input, target):
     y = model.forward(input)
@@ -154,13 +43,15 @@ def train_model(model, train_input, train_target, validation_input, validation_t
     test_size = test_input.size(0)
     validation_size = validation_input.size()
 
-    n_epochs = parameters.getParameter('epochs')
+    # n_epochs = parameters.getParameter('epochs')
+    n_epochs = 300
 
-    optimizer = torch.optim.SGD(model.parameters(), lr = eta)
-    scheduler = adaptive_time_step(optimizer)
+    # optimizer = torch.optim.SGD(model.parameters(), lr = eta)
+    optimizer = torch.optim.Adam(model.parameters(), lr = eta)
+    #scheduler = adaptive_time_step(optimizer)
 
     penalty_parameter_2 = 0.001
-    penalty_parameter_1 = 0.0025
+    penalty_parameter_1 = 0.001
 
     for e in range(0, n_epochs):
         mini_batch_size = initial_mini_batch_size
@@ -173,12 +64,15 @@ def train_model(model, train_input, train_target, validation_input, validation_t
             train_target_narrowed = train_target.narrow(0, b, mini_batch_size).long()
 
             loss = criterion(output, train_target_narrowed)
-            l2_penalty = l2_regularization(model.parameters(),penalty_parameter_2)
-            l1_penalty = l1_regularization(model.parameters(),penalty_parameter_1)
+            # l2_penalty = l2_regularization(model.parameters(),penalty_parameter_2)
+            # l1_penalty = l1_regularization(model.parameters(),penalty_parameter_1)
+
+            l2_penalty = 1e-10
+            l1_penalty = 1e-10
 
             loss += l2_penalty+l1_penalty
 
-            scheduler.step(loss)
+            #scheduler.step(loss)
 
             sum_loss = sum_loss + loss.data[0]
             model.zero_grad()
@@ -254,7 +148,6 @@ def create_validation(train_input, train_output, percentage):
 
     return train_input, train_output, validation_input, validation_output
 
-
 train_input, train_target = Variable(train_input), Variable(train_target)
 test_input, test_target = Variable(test_input), Variable(test_target)
 
@@ -263,7 +156,7 @@ train_input, train_target, validation_input, validation_output = create_validati
 hidden1 = 100
 hidden2 = 100
 
-model, criterion = MC_DCNNNet(), nn.CrossEntropyLoss()
+model, criterion = models.ShallowConvNetPredictor_2(), nn.CrossEntropyLoss()
 model.apply(init_weights)
 
 eta, mini_batch_size = 1e-1, 79
