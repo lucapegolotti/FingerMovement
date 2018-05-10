@@ -89,13 +89,14 @@ class NormalParameter(Parameter):
 
 class ParametersSampler():
     def __init__(self):
-        self.parameters = {'batch_size': UniformParameter("int", 1, 10, 400),
+        self.parameters = {'batch_size': UniformParameter("float", 1, 0.1, 0.5),
                            'eta': UniformExponentialParameter("float", 10, -5, -1),
                            'dropout': NormalParameter("float", 1, 0.1, 0.05),
                            'size_conv1': UniformParameter("int",1,10,80),
                            'size_conv2': UniformParameter("int",1,10,80),
                            'size_kernel': UniformOddParameter("int",1,3,13),
                            'size_hidden_layer': UniformParameter("int",1,10,120),
+                           'scale': UniformParameter("float",1,0.7,0.95),
                            'dropout': UniformParameter("float",1,0.2,0.5),
                            'l2_parameter': UniformExponentialParameter("float", 10, -6, -1),
                             }

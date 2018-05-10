@@ -24,7 +24,7 @@ class OutputManager():
         count = 0
         for o in outputs:
             count = count + 1
-            numpy.savetxt(self.output_dir + "/run" + str(count) + ".csv", o, delimiter=",", fmt="%.2f")
+            numpy.savetxt(self.output_dir + "/run" + str(count) + ".csv", o, delimiter=",", fmt="%.4f")
 
         # swap with best if the result is better
         # mustCopy = True
