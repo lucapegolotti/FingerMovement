@@ -23,7 +23,6 @@ def load_data(data_aug=False,data_long=False):
     # for i in range(test_samples):
     #     for j in range(channels):
     #         test_input[i,j,:] = torch.tensor(np.convolve(test_input[i,j,:],mask,mode='same'))
-
     # for i in range(train_samples):
     #     for j in range(channels):
     #         train_input[i,j,:] = torch.tensor(np.convolve(train_input[i,j,:],mask,mode='same'))
@@ -31,8 +30,6 @@ def load_data(data_aug=False,data_long=False):
     for i in range(0,channels):
         me_train = torch.mean(train_input[:,i,:]) # 28 medie
         std_train = torch.std(train_input[:,i,:])
-        # me_test = torch.mean(test_input[:,i,:])
-        # std_test = torch.std(test_input[:,i,:])
         train_input[:,i,:] = (train_input[:,i,:] - me_train)/std_train;
         test_input[:,i,:] = (test_input[:,i,:] - me_train)/std_train;
 
