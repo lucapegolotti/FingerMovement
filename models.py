@@ -40,7 +40,7 @@ class MC_DCNNNet(nn.Module):
         x = x.unsqueeze(1)
         x = F.relu(F.avg_pool2d(self.conv1(x),kernel_size=(1,3)))
         x = F.relu(F.avg_pool2d(self.conv2(x),kernel_size=(1,3)))
-        x = self.fc1(x.view(dim1,-1)))
+        x = self.fc1(x.view(dim1,-1))
         return x
 
 class MC_DCNNNet2(nn.Module):

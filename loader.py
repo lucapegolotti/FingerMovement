@@ -16,21 +16,19 @@ def load_data(data_aug=False):
     mask_size = 1
     mask = np.ones(mask_size)/mask_size
 
-    for i in range(test_samples):
-        for j in range(channels):
-            test_input[i,j,:] = torch.tensor(np.convolve(test_input[i,j,:],mask,mode='same'))
-
-    for i in range(train_samples):
-        for j in range(channels):
-            train_input[i,j,:] = torch.tensor(np.convolve(train_input[i,j,:],mask,mode='same'))
+    # for i in range(test_samples):
+    #     for j in range(channels):
+    #         test_input[i,j,:] = torch.tensor(np.convolve(test_input[i,j,:],mask,mode='same'))
+    #
+    # for i in range(train_samples):
+    #     for j in range(channels):
+    #         train_input[i,j,:] = torch.tensor(np.convolve(train_input[i,j,:],mask,mode='same'))
 
     for i in range(0,channels):
         me_train = torch.mean(train_input[:,i,:])
         std_train = torch.std(train_input[:,i,:])
-        me_test = torch.mean(test_input[:,i,:])
-        std_test = torch.std(test_input[:,i,:])
         train_input[:,i,:] = (train_input[:,i,:] - me_train)/std_train;
-        test_input[:,i,:] = (test_input[:,i,:] - me_test)/std_test;
+        test_input[:,i,:] = (test_input[:,i,:] - me_train)/std_train;
 
     # for i in range(0,channels):
     #     for j in range(0,train_samples):
