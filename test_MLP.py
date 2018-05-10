@@ -19,7 +19,8 @@ torch.manual_seed(np.random.randint(0,100000))
 
 outputManager = OutputManager()
 
-train_input, train_target, test_input, test_target = loader.load_data(data_aug=True)
+train_input, train_target, test_input, test_target = loader.load_data(data_aug=True,data_long=False,filtered=True,filtered_load=True)
+
 
 train_target = train_target.type(torch.FloatTensor)
 test_target = test_target.type(torch.FloatTensor)
@@ -156,10 +157,10 @@ train_input, train_target, validation_input, validation_output = create_validati
 hidden1 = 100
 hidden2 = 100
 
-model, criterion = models.MC_DCNNNet2(), nn.CrossEntropyLoss()
+model, criterion = models.ShallowConvNetPredictor(), nn.CrossEntropyLoss()
 model.apply(init_weights)
 
-eta, mini_batch_size = 0.1, 79
+eta, mini_batch_size = 0.001, 79
 train_model(model, train_input, train_target, validation_input, validation_output, test_input, test_target, eta, mini_batch_size)
 
 nberrors_train = compute_nb_errors(model,train_input, train_target)
@@ -173,4 +174,4 @@ test_error_string = "Test error: {0:.2f}%".format(test_error)
 print(train_error_string)
 print(test_error_string)
 
-outputManager.write(train_error_string,test_error_string,parameters)
+#outputManager.write(train_error_string,test_error_string,parameters)
