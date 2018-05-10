@@ -62,7 +62,7 @@ class ShallowConvNetPredictorWithDropout(nn.Module):
        self.conv1 = nn.Conv2d(1, n_conv_1 , kernel_size=(1,kernel_size))
        self.conv2 = nn.Conv2d(n_conv_1, n_conv_2, kernel_size=(28,1))
 
-       self.fc1 = nn.Linear( n_conv_2*(50-kernel_size+1)/2, n_hidden)
+       self.fc1 = nn.Linear( int(n_conv_2*(50-kernel_size+1)/2), n_hidden)
        self.fc2 = nn.Linear( n_hidden, 2)
 
        self.dropout = nn.Dropout(p=p_dropout)

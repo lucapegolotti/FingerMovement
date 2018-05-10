@@ -147,6 +147,7 @@ while 1:
         print("Starting run number " + str(run))
         train_input, train_target = Variable(train_input), Variable(train_target)
         test_input, test_target = Variable(test_input), Variable(test_target)
+        validation_input, validation_target = Variable(validation_input), Variable(validation_target)
 
         model, criterion = models.ShallowConvNetPredictorWithDropout(size_hidden_layer,size_kernel,size_conv1,size_conv2,dropout), nn.CrossEntropyLoss()
         model.apply(init_weights)
