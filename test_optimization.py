@@ -14,9 +14,6 @@ import random
 
 torch.manual_seed(np.random.randint(0,100000))
 
-parameters = ParametersSampler()
-outputManager = OutputManager()
-
 train_input, train_target, test_input, test_target = loader.load_data(data_aug=True)
 
 train_target = train_target.type(torch.FloatTensor)
@@ -142,44 +139,49 @@ def create_validation(train_input, train_output, percentage):
 
 # sample parameters
 
-parameters.showMe()
+while 1:
+    outputManager = OutputManager()
+    parameters = ParametersSampler()
 
-# save value of parameters
-batch_size = parameters.getParameter("batch_size")
-eta = parameters.getParameter("eta")
-dropout = parameters.getParameter("dropout")
-size_conv1 = parameters.getParameter("size_conv1")
-size_conv2 = parameters.getParameter("size_conv2")
-size_kernel = parameters.getParameter("size_kernel")
-size_hidden_layer = parameters.getParameter("size_hidden_layer")
-l2_parameter = parameters.getParameter("l2_parameter")
+    parameters.showMe()
 
-nepochs = 200
+    # save value of parameters
+    batch_size = parameters.getParameter("batch_size")
+    eta = parameters.getParameter("eta")
+    dropout = parameters.getParameter("dropout")
+    size_conv1 = parameters.getParameter("size_conv1")
+    size_conv2 = parameters.getParameter("size_conv2")
+    size_kernel = parameters.getParameter("size_kernel")
+    size_hidden_layer = parameters.getParameter("size_hidden_layer")
+    l2_parameter = parameters.getParameter("l2_parameter")
 
-outputs = []
+    nepochs = 200
 
-for run in range(5):
-    train_input, train_target = Variable(train_input), Variable(train_target)
-    test_input, test_target = Variable(test_input), Variable(test_target)
+    outputs = []
 
-    train_input, train_target, validation_input, validation_output = create_validation(train_input, train_target, 0)
+    for run in range(5):
+        print("Starting run number " + str(run))
+        train_input, train_target = Variable(train_input), Variable(train_target)
+        test_input, test_target = Variable(test_input), Variable(test_target)
 
-    model, criterion = models.ShallowConvNetPredictorWithDropout(size_hidden_layer,size_kernel,size_conv1,size_conv2,dropout), nn.CrossEntropyLoss()
-    model.apply(init_weights)
+        train_input, train_target, validation_input, validation_output = create_validation(train_input, train_target, 0)
 
-    output = train_model(model, nepochs, train_input, train_target, validation_input, validation_output, test_input, test_target, eta, batch_size, l2_parameter)
+        model, criterion = models.ShallowConvNetPredictorWithDropout(size_hidden_layer,size_kernel,size_conv1,size_conv2,dropout), nn.CrossEntropyLoss()
+        model.apply(init_weights)
 
-    outputs.append(output)
+        output = train_model(model, nepochs, train_input, train_target, validation_input, validation_output, test_input, test_target, eta, batch_size, l2_parameter)
 
-    nberrors_train = compute_nb_errors(model,train_input, train_target)
-    nberrors_test = compute_nb_errors(model,test_input, test_target)
+        outputs.append(output)
 
-    train_error = (nberrors_train/train_size)*100
-    test_error = (nberrors_test/test_size)*100
+        nberrors_train = compute_nb_errors(model,train_input, train_target)
+        nberrors_test = compute_nb_errors(model,test_input, test_target)
 
-    train_error_string = "Train error: {0:.2f}%".format(train_error)
-    test_error_string = "Test error: {0:.2f}%".format(test_error)
-    print(train_error_string)
-    print(test_error_string)
+        train_error = (nberrors_train/train_size)*100
+        test_error = (nberrors_test/test_size)*100
 
-outputManager.write(parameters,outputs)
+        train_error_string = "Train error: {0:.2f}%".format(train_error)
+        test_error_string = "Test error: {0:.2f}%".format(test_error)
+        print(train_error_string)
+        print(test_error_string)
+
+    outputManager.write(parameters,outputs)
