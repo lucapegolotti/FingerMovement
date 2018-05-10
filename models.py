@@ -14,6 +14,18 @@ class LinearPredictor(nn.Module):
         x = self.fc1(x)
         return x
 
+class LinearPredictor2(nn.Module):
+    def __init__(self):
+        super(LinearPredictor2, self).__init__()
+        self.fc1 = nn.Linear(230, 2)
+        self.conv1 = nn.Conv1d(28, 10, kernel_size=5)
+
+    def forward(self, x):
+        x = F.relu(F.avg_pool1d(self.conv1(x),kernel_size=2))
+        x = x.view(-1, x.size(1) * x.size(2))
+        x = self.fc1(x)
+        return x
+
 class MC_DCNNNet(nn.Module):
     def __init__(self):
         super(MC_DCNNNet, self).__init__()
@@ -28,7 +40,27 @@ class MC_DCNNNet(nn.Module):
         x = x.unsqueeze(1)
         x = F.relu(F.avg_pool2d(self.conv1(x),kernel_size=(1,3)))
         x = F.relu(F.avg_pool2d(self.conv2(x),kernel_size=(1,3)))
-        x = F.sigmoid(self.fc1(x.view(dim1,-1)))
+        x = self.fc1(x.view(dim1,-1)))
+        return x
+
+class MC_DCNNNet2(nn.Module):
+    def __init__(self):
+        super(MC_DCNNNet2, self).__init__()
+        self.conv1 = nn.Conv1d(28, 28, kernel_size=6, groups=28, bias=True)
+        self.conv2 = nn.Conv1d(224, 112, kernel_size=4, groups=28, bias=True)
+        self.fc1 = nn.Linear(252, 25)
+        self.fc2 = nn.Linear(25, 16)
+        self.fc4 = nn.Linear(1400, 25)
+        self.fc3 = nn.Linear(16,2)
+        self.activation2 = nn.functional.sigmoid
+        self.activation1 = nn.LeakyReLU(0.001)
+
+    def forward(self, x):
+        y = self.activation1(F.avg_pool1d(self.conv1(x),kernel_size=5))
+        y = self.activation1(self.fc1(y.view(-1, 252)))
+        x = self.activation1(self.fc4(x.view(-1, 1400)))
+        x = self.activation1(self.fc2(x+y))
+        x = self.fc3(x)
         return x
 
 class ShallowConvNetPredictor(nn.Module):

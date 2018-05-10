@@ -44,11 +44,11 @@ def train_model(model, train_input, train_target, validation_input, validation_t
     validation_size = validation_input.size()
 
     # n_epochs = parameters.getParameter('epochs')
-    n_epochs = 300
+    n_epochs = 1000
 
     # optimizer = torch.optim.SGD(model.parameters(), lr = eta)
     optimizer = torch.optim.Adam(model.parameters(), lr = eta)
-    #scheduler = adaptive_time_step(optimizer)
+    scheduler = adaptive_time_step(optimizer)
 
     penalty_parameter_2 = 0.001
     penalty_parameter_1 = 0.001
@@ -72,7 +72,7 @@ def train_model(model, train_input, train_target, validation_input, validation_t
 
             loss += l2_penalty+l1_penalty
 
-            #scheduler.step(loss)
+            scheduler.step()
 
             sum_loss = sum_loss + loss.data[0]
             model.zero_grad()
@@ -115,10 +115,10 @@ def adaptive_time_step(optimizer):
 
     # Lambda LR
     # Step LR
-    #step_size = 50
-    #gamma = 0.95
-    #last_epoch = -1
-    #scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size, gamma, last_epoch)
+    step_size = 30
+    gamma = 0.95
+    last_epoch = -1
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size, gamma, last_epoch)
 
     # Exponential LR
     #gamma = 0.99
@@ -126,7 +126,7 @@ def adaptive_time_step(optimizer):
     #scheduler =  torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma, last_epoch)
 
     # ReduceLR on Plateau
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min')
+    # scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min')
 
     return scheduler
 
@@ -156,10 +156,10 @@ train_input, train_target, validation_input, validation_output = create_validati
 hidden1 = 100
 hidden2 = 100
 
-model, criterion = models.ShallowConvNetPredictor_2(), nn.CrossEntropyLoss()
+model, criterion = models.MC_DCNNNet2(), nn.CrossEntropyLoss()
 model.apply(init_weights)
 
-eta, mini_batch_size = 1e-1, 79
+eta, mini_batch_size = 0.1, 79
 train_model(model, train_input, train_target, validation_input, validation_output, test_input, test_target, eta, mini_batch_size)
 
 nberrors_train = compute_nb_errors(model,train_input, train_target)
