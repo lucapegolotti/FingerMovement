@@ -19,13 +19,16 @@ for i = 1:number_channels
    data_channels_left{end+1} = data_channels{i}(output == 1,:);
 end
 
+
 % plot first three channels means
-for i = 1:3
-   subplot(1,3,i)
+figure(5)
+for i = 4:6
+   subplot(1,3,i-3)
    plot(mean(data_channels_right{i},1),'r','Linewidth',1)
    hold on
    plot(mean(data_channels_left{i},1),'b','Linewidth',1)
 end
+
 
 %% Plot mean values over time of first three channels (test) 
 
@@ -46,8 +49,9 @@ for i = 1:number_channels
 end
 
 % plot first three channels means
-for i = 1:3
-   subplot(1,3,i)
+figure(1)
+for i = 4:6
+   subplot(1,3,i-3)
    plot(mean(data_channels_right{i},1),'r','Linewidth',1)
    hold on
    plot(mean(data_channels_left{i},1),'b','Linewidth',1)

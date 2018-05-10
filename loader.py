@@ -7,8 +7,6 @@ def load_data(data_aug=False):
 
     test_input, test_target = bci.load(root='./data_bci',train=False)
 
-    print(np.convolve(test_input[0,1,:],np.array([1,1,1,1,1])/5,mode='valid'))
-
     train_samples = train_input.size(0)
     test_samples = test_input.size(0)
     channels = train_input.size(1)
