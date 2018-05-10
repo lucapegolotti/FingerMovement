@@ -28,7 +28,6 @@ def load_data(data_aug=False,data_long=False,filtered=False,filtered_load=False)
         train_target = torch.cat(train_target_list,dim=0)
 
         
-
     train_samples = train_input.size(0)
     test_samples = test_input.size(0)
     channels = train_input.size(1)

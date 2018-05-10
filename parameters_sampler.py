@@ -1,6 +1,7 @@
 import random
 from abc import ABC, abstractmethod
 import numpy as np
+import math
 
 class Parameter(ABC):
     def __init__(self, type, size):
@@ -48,6 +49,33 @@ class UniformParameter(Parameter):
     def doSample(self):
         return np.random.uniform(self.minValue, self.maxValue, size = self.size)
 
+class UniformOddParameter(Parameter):
+    def __init__(self, type, size, minValue, maxValue):
+        super().__init__(type, size)
+        if minValue % 2 is not 1:
+            raise ValueError("Min value of odd parameter must be odd")
+
+        if maxValue % 2 is not 1:
+            raise ValueError("Min value of odd parameter must be odd")
+
+        self.minValue = (minValue - 1)/2
+        self.maxValue = (maxValue - 1)/2
+        self.sample()
+
+    def doSample(self):
+        return 2 * np.random.uniform(self.minValue, self.maxValue, size = self.size).astype(int) + 1
+
+class UniformExponentialParameter(Parameter):
+    def __init__(self, type, base, minExponent, maxExponent):
+        super().__init__(type, 1)
+        self.minExponent = minExponent
+        self.maxExponent = maxExponent
+        self.base = base
+        self.sample()
+
+    def doSample(self):
+        return np.array([math.pow(self.base,np.random.uniform(self.minExponent, self.maxExponent))])
+
 class NormalParameter(Parameter):
     def __init__(self, type, size, meanValue, stdValue):
         super().__init__(type, size)
@@ -61,10 +89,16 @@ class NormalParameter(Parameter):
 
 class ParametersSampler():
     def __init__(self):
-        self.parameters = {'batch_size': UniformParameter("int", 1, 40, 80),
-                           'eta': NormalParameter("float", 1, 0.15, 0.05),
-                           'epochs': UniformParameter("int", 1, 100, 1000),
-                           'dropout': NormalParameter("float", 1, 0.1, 0.05)}
+        self.parameters = {'batch_size': UniformParameter("int", 1, 10, 400),
+                           'eta': UniformExponentialParameter("float", 10, -5, -1),
+                           'dropout': NormalParameter("float", 1, 0.1, 0.05),
+                           'size_conv1': UniformParameter("int",1,10,80),
+                           'size_conv2': UniformParameter("int",1,10,80),
+                           'size_kernel': UniformOddParameter("int",1,3,13),
+                           'size_hidden_layer': UniformParameter("int",1,10,120),
+                           'dropout': UniformParameter("float",1,0.2,0.5),
+                           'l2_parameter': UniformExponentialParameter("float", 10, -6, -1),
+                            }
     def showMe(self):
         print("List of parameters:")
         print("===================")

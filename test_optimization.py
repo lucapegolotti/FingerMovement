@@ -14,13 +14,7 @@ import random
 
 torch.manual_seed(np.random.randint(0,100000))
 
-# parameters = ParametersSampler()
-# parameters.showMe()
-
-outputManager = OutputManager()
-
-train_input, train_target, test_input, test_target = loader.load_data(data_aug=True,data_long=False,filtered=True,filtered_load=True)
-
+train_input, train_target, test_input, test_target = loader.load_data(data_aug=True)
 
 train_target = train_target.type(torch.FloatTensor)
 test_target = test_target.type(torch.FloatTensor)
@@ -39,27 +33,22 @@ def compute_nb_errors(model, input, target):
     return nberrors
 
 #def train_model(model, train_input, train_target, validation_input, validation_target, eta, mini_batch_size):
-def train_model(model, train_input, train_target, validation_input, validation_target, test_input, test_target, eta, mini_batch_size):
+def train_model(model, nepochs, train_input, train_target, validation_input, validation_target, test_input, test_target, eta, mini_batch_size, l2_parameter):
     initial_mini_batch_size = mini_batch_size
 
     train_size = train_input.size(0)
     test_size = test_input.size(0)
     validation_size = validation_input.size()
 
-    # n_epochs = parameters.getParameter('epochs')
-    n_epochs = 1000
-
     # optimizer = torch.optim.SGD(model.parameters(), lr = eta)
-    optimizer = torch.optim.Adam(model.parameters(), lr = eta)
+    optimizer = torch.optim.Adam(model.parameters(), lr = eta, weight_decay=l2_parameter)
     scheduler = adaptive_time_step(optimizer)
 
-    penalty_parameter_2 = 0.001
-    penalty_parameter_1 = 0.001
+    output_array = np.zeros(shape=(nepochs,4))
 
-    for e in range(0, n_epochs):
+    for e in range(0, nepochs):
         mini_batch_size = initial_mini_batch_size
         sum_loss = 0
-        # We do this with mini-batches
         for b in range(0, train_input.size(0), mini_batch_size):
 
             mini_batch_size = min(mini_batch_size, train_input.size(0) - b)
@@ -67,13 +56,6 @@ def train_model(model, train_input, train_target, validation_input, validation_t
             train_target_narrowed = train_target.narrow(0, b, mini_batch_size).long()
 
             loss = criterion(output, train_target_narrowed)
-            # l2_penalty = l2_regularization(model.parameters(),penalty_parameter_2)
-            # l1_penalty = l1_regularization(model.parameters(),penalty_parameter_1)
-
-            l2_penalty = 1e-10
-            l1_penalty = 1e-10
-
-            loss += l2_penalty+l1_penalty
 
             scheduler.step()
 
@@ -81,8 +63,6 @@ def train_model(model, train_input, train_target, validation_input, validation_t
             model.zero_grad()
             loss.backward()
             optimizer.step()
-            #for p in model.parameters():
-            #    p.data.sub_(eta * p.grad.data)
 
         train_error = compute_nb_errors(model,train_input, train_target)
         test_error = compute_nb_errors(model,test_input, test_target)
@@ -90,9 +70,15 @@ def train_model(model, train_input, train_target, validation_input, validation_t
         print("Loss function = {0:.8f}".format(sum_loss))
         print("Train error: {0:.2f}%".format((train_error/train_size)*100))
         print("Test error: {0:.2f}%".format((test_error/test_size)*100))
+        output_array[e,0] = e
+        output_array[e,1] = sum_loss
+        output_array[e,2] = (train_error/train_size)*100
+        output_array[e,3] = (test_error/test_size)*100
         if validation_size[0] is not 0:
             validation_error = compute_nb_errors(model,validation_input, validation_target)
             print("Validation error: {0:.2f}%".format((validation_error/validation_size[0])*100))
+
+    return output_array
 
 def l2_regularization(parameters,penalty_parameter):
     # See Book (pg.116,Chapter 5)
@@ -151,33 +137,51 @@ def create_validation(train_input, train_output, percentage):
 
     return train_input, train_output, validation_input, validation_output
 
-train_input, train_target = Variable(train_input), Variable(train_target)
-test_input, test_target = Variable(test_input), Variable(test_target)
+# sample parameters
 
-train_input, train_target, validation_input, validation_output = create_validation(train_input, train_target, 0)
+while 1:
+    outputManager = OutputManager()
+    parameters = ParametersSampler()
 
-hidden1 = 100
-hidden2 = 100
+    parameters.showMe()
 
-model, criterion = models.ShallowConvNetPredictor(), nn.CrossEntropyLoss()
-model.apply(init_weights)
+    # save value of parameters
+    batch_size = parameters.getParameter("batch_size")
+    eta = parameters.getParameter("eta")
+    dropout = parameters.getParameter("dropout")
+    size_conv1 = parameters.getParameter("size_conv1")
+    size_conv2 = parameters.getParameter("size_conv2")
+    size_kernel = parameters.getParameter("size_kernel")
+    size_hidden_layer = parameters.getParameter("size_hidden_layer")
+    l2_parameter = parameters.getParameter("l2_parameter")
 
-<<<<<<< HEAD
-eta, mini_batch_size = 0.001, 79
-=======
-eta, mini_batch_size = 1e-3, 79
->>>>>>> 41e16734e6e3bb4b6df7bbd6f3845f7819ea639e
-train_model(model, train_input, train_target, validation_input, validation_output, test_input, test_target, eta, mini_batch_size)
+    nepochs = 200
 
-nberrors_train = compute_nb_errors(model,train_input, train_target)
-nberrors_test = compute_nb_errors(model,test_input, test_target)
+    outputs = []
 
-train_error = (nberrors_train/train_size)*100
-test_error = (nberrors_test/test_size)*100
+    for run in range(5):
+        print("Starting run number " + str(run))
+        train_input, train_target = Variable(train_input), Variable(train_target)
+        test_input, test_target = Variable(test_input), Variable(test_target)
 
-train_error_string = "Train error: {0:.2f}%".format(train_error)
-test_error_string = "Test error: {0:.2f}%".format(test_error)
-print(train_error_string)
-print(test_error_string)
+        train_input, train_target, validation_input, validation_output = create_validation(train_input, train_target, 0)
 
-#outputManager.write(train_error_string,test_error_string,parameters)
+        model, criterion = models.ShallowConvNetPredictorWithDropout(size_hidden_layer,size_kernel,size_conv1,size_conv2,dropout), nn.CrossEntropyLoss()
+        model.apply(init_weights)
+
+        output = train_model(model, nepochs, train_input, train_target, validation_input, validation_output, test_input, test_target, eta, batch_size, l2_parameter)
+
+        outputs.append(output)
+
+        nberrors_train = compute_nb_errors(model,train_input, train_target)
+        nberrors_test = compute_nb_errors(model,test_input, test_target)
+
+        train_error = (nberrors_train/train_size)*100
+        test_error = (nberrors_test/test_size)*100
+
+        train_error_string = "Train error: {0:.2f}%".format(train_error)
+        test_error_string = "Test error: {0:.2f}%".format(test_error)
+        print(train_error_string)
+        print(test_error_string)
+
+    outputManager.write(parameters,outputs)
