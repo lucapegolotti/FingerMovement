@@ -17,11 +17,12 @@ def create_validation(train_input, train_target, percentage, data_aug):
         train_input_list = []
         train_target_list = []
         for i in range(10):
+
             train_input_list.append(train_input[indices_train,:,i::10])
             train_target_list.append(train_target[indices_train])
 
         validation_input = train_input[indices_validation,:,6::10]
-        validation_target = train_input[indices_validation,:,6::10]
+        validation_target = train_target[indices_validation]
 
         train_input = torch.cat(train_input_list,dim=0)
         train_target = torch.cat(train_target_list,dim=0)
@@ -34,8 +35,8 @@ def create_validation(train_input, train_target, percentage, data_aug):
             validation_input = torch.LongTensor([]);
             validation_target = torch.LongTensor([]);
 
-    train_input = train_input[indices_train,:,:]
-    train_target = train_target[indices_train]
+        train_input = train_input[indices_train,:,:]
+        train_target = train_target[indices_train]
 
     print(train_input.size())
     print(validation_input.size())

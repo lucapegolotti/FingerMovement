@@ -14,7 +14,7 @@ import random
 
 torch.manual_seed(np.random.randint(0,100000))
 
-train_input, train_target, test_input, test_target, validation_input, validation_target = loader.load_data(data_aug=False)
+train_input, train_target, test_input, test_target, validation_input, validation_target = loader.load_data(data_aug=True)
 
 train_target = train_target.type(torch.FloatTensor)
 test_target = test_target.type(torch.FloatTensor)
@@ -28,6 +28,8 @@ def compute_nb_errors(model, input, target):
     y = model.forward(input)
     indicesy = np.argmax(y.data,1).float()
 
+    print(target.data.size())
+    print(indicesy.size())
     nberrors = np.linalg.norm(indicesy - target.data,0)
     model.train(True)
     return nberrors
