@@ -1,0 +1,34 @@
+\begin{thebibliography}{1}
+
+\bibitem{bci_ii}
+{BCI Competition II}.
+\newblock \url{http://www.bbci.de/competition/ii/}.
+\newblock Accessed: 2010-09-30.
+
+\bibitem{goodfellow2016deep}
+I.~Goodfellow, Y.~Bengio, A.~Courville, and Y.~Bengio.
+\newblock {\em Deep learning}, volume~1.
+\newblock MIT press Cambridge, 2016.
+
+\bibitem{schirrmeister2017deep}
+R.~T. Schirrmeister, J.~T. Springenberg, L.~D.~J. Fiederer, M.~Glasstetter,
+  K.~Eggensperger, M.~Tangermann, F.~Hutter, W.~Burgard, and T.~Ball.
+\newblock Deep learning with convolutional neural networks for brain mapping
+  and decoding of movement-related information from the human eeg.
+\newblock {\em arXiv preprint arXiv:1703.05051}, 2017.
+
+\bibitem{wang2018data}
+F.~Wang, S.-h. Zhong, J.~Peng, J.~Jiang, and Y.~Liu.
+\newblock Data augmentation for eeg-based emotion recognition with deep
+  convolutional neural networks.
+\newblock In {\em International Conference on Multimedia Modeling}, pages
+  82--93. Springer, 2018.
+
+\bibitem{zheng2014time}
+Y.~Zheng, Q.~Liu, E.~Chen, Y.~Ge, and J.~L. Zhao.
+\newblock Time series classification using multi-channels deep convolutional
+  neural networks.
+\newblock In {\em International Conference on Web-Age Information Management},
+  pages 298--310. Springer, 2014.
+
+\end{thebibliography}
