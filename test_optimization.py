@@ -14,7 +14,7 @@ import random
 
 torch.manual_seed(np.random.randint(0,100000))
 
-train_input, train_target, test_input, test_target = loader.load_data(data_aug=True)
+train_input, train_target, test_input, test_target, validation_input, validation_target = loader.load_data(data_aug=True)
 
 train_target = train_target.type(torch.FloatTensor)
 test_target = test_target.type(torch.FloatTensor)
@@ -28,12 +28,14 @@ def compute_nb_errors(model, input, target):
     y = model.forward(input)
     indicesy = np.argmax(y.data,1).float()
 
+    print(target.data.size())
+    print(indicesy.size())
     nberrors = np.linalg.norm(indicesy - target.data,0)
     model.train(True)
     return nberrors
 
 #def train_model(model, train_input, train_target, validation_input, validation_target, eta, mini_batch_size):
-def train_model(model, nepochs, train_input, train_target, validation_input, validation_target, test_input, test_target, eta, mini_batch_size, l2_parameter):
+def train_model(model, nepochs, train_input, train_target, validation_input, validation_target, test_input, test_target, eta, mini_batch_size, l2_parameter, scale):
     initial_mini_batch_size = mini_batch_size
 
     train_size = train_input.size(0)
@@ -42,9 +44,12 @@ def train_model(model, nepochs, train_input, train_target, validation_input, val
 
     # optimizer = torch.optim.SGD(model.parameters(), lr = eta)
     optimizer = torch.optim.Adam(model.parameters(), lr = eta, weight_decay=l2_parameter)
-    scheduler = adaptive_time_step(optimizer)
+    scheduler = adaptive_time_step(optimizer,scale)
 
-    output_array = np.zeros(shape=(nepochs,4))
+    if validation_size[0] is not 0:
+        output_array = np.zeros(shape=(nepochs,5))
+    else:
+        output_array = np.zeros(shape=(nepochs,4))
 
     for e in range(0, nepochs):
         mini_batch_size = initial_mini_batch_size
@@ -77,6 +82,7 @@ def train_model(model, nepochs, train_input, train_target, validation_input, val
         if validation_size[0] is not 0:
             validation_error = compute_nb_errors(model,validation_input, validation_target)
             print("Validation error: {0:.2f}%".format((validation_error/validation_size[0])*100))
+            output_array[e,4] = (validation_error/validation_size[0])*100
 
     return output_array
 
@@ -98,14 +104,14 @@ def init_weights(layer):
     if type(layer) == nn.Linear:
         torch.nn.init.xavier_uniform(layer.weight)
 
-def adaptive_time_step(optimizer):
+def adaptive_time_step(optimizer,scale):
     # See http://pytorch.org/docs/master/optim.html#how-to-adjust-learning-rate
     # Section "How to adjust Learning Rate"
 
     # Lambda LR
     # Step LR
     step_size = 30
-    gamma = 0.95
+    gamma = scale
     last_epoch = -1
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size, gamma, last_epoch)
 
@@ -119,34 +125,13 @@ def adaptive_time_step(optimizer):
 
     return scheduler
 
-def create_validation(train_input, train_output, percentage):
-    samples = train_input.size(0)
-    validation_size = round(percentage * samples)
-
-    indices = torch.LongTensor(np.random.choice(samples, samples))
-
-    if (percentage != 0):
-        validation_input = train_input[indices[0:validation_size],:,:]
-        validation_output = train_output[indices[0:validation_size]]
-    else:
-        validation_input = torch.LongTensor([]);
-        validation_output = torch.LongTensor([]);
-
-    train_input = train_input[indices[validation_size+1:samples],:,:]
-    train_output = train_output[indices[validation_size+1:samples]]
-
-    return train_input, train_output, validation_input, validation_output
-
-# sample parameters
-
 while 1:
-    outputManager = OutputManager()
     parameters = ParametersSampler()
 
     parameters.showMe()
 
     # save value of parameters
-    batch_size = parameters.getParameter("batch_size")
+    batch_size = int(train_size * parameters.getParameter("batch_size"))
     eta = parameters.getParameter("eta")
     dropout = parameters.getParameter("dropout")
     size_conv1 = parameters.getParameter("size_conv1")
@@ -154,6 +139,7 @@ while 1:
     size_kernel = parameters.getParameter("size_kernel")
     size_hidden_layer = parameters.getParameter("size_hidden_layer")
     l2_parameter = parameters.getParameter("l2_parameter")
+    scale = parameters.getParameter("scale")
 
     nepochs = 200
 
@@ -163,13 +149,12 @@ while 1:
         print("Starting run number " + str(run))
         train_input, train_target = Variable(train_input), Variable(train_target)
         test_input, test_target = Variable(test_input), Variable(test_target)
-
-        train_input, train_target, validation_input, validation_output = create_validation(train_input, train_target, 0)
+        validation_input, validation_target = Variable(validation_input), Variable(validation_target)
 
         model, criterion = models.ShallowConvNetPredictorWithDropout(size_hidden_layer,size_kernel,size_conv1,size_conv2,dropout), nn.CrossEntropyLoss()
         model.apply(init_weights)
 
-        output = train_model(model, nepochs, train_input, train_target, validation_input, validation_output, test_input, test_target, eta, batch_size, l2_parameter)
+        output = train_model(model, nepochs, train_input, train_target, validation_input, validation_target, test_input, test_target, eta, batch_size, l2_parameter, scale)
 
         outputs.append(output)
 
@@ -184,4 +169,5 @@ while 1:
         print(train_error_string)
         print(test_error_string)
 
+    outputManager = OutputManager()
     outputManager.write(parameters,outputs)
