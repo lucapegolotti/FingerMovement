@@ -53,6 +53,7 @@
 \begin{document}
 
 \title{Deep Learning Mini-Project 1 Report \\ Prediction of Finger Movements from EEG Recordings}
+
 \author{Group 78\footnote{As agreed with Dr. F. Fleuret, L. Pegolotti has collaborated with group 78 for Project 1 and with group 79, with M. Martin, for Project 2. C. Bigoni and N. Ripamonti have worked together on both projects.}\\ Caterina Bigoni, Luca Pegolotti \,and Nicol\`o Ripamonti}
 \date{18 May 2018}
 \maketitle
@@ -88,6 +89,7 @@ Moreover, we remark that  the means over the test and train dataset are very dif
 This behaviour is observed, although with different intensity, for all 28 channels. 
 One possible explanation of this discrepancy lies in the fact that the averages were not performed on equally numerous datasets: 316 samples and 100 samples in the training and test datasets, respectively. 
 Indeed, we can confirm that the average obtained from a subset of the training dataset of 100 samples is quite different from the average over 316 samples shown in Figure \ref{fig_mean_1000hz_vs_downsampled}. 
+<<<<<<< HEAD
 %
  \begin{figure}[h]
  \begin{center}
@@ -102,24 +104,44 @@ For some channels (e.g., channel 3) the down-sampled averages present a lower va
   \end{center}
   \end{figure}t
   %
+=======
+ \begin{figure}[h]
+ \begin{center}
+  \includegraphics[width=1\textwidth]{fig/fig4_mean_downsampled_vs1000} 
+  \caption{lala\label{fig_mean_1000hz_vs_downsampled}}
+  \end{center}
+  \end{figure}
+>>>>>>> 7a21b3a290c827ff4e64b8e95193618b4002ef1f
  This behaviour can be justified if  samples have a high variance and Figure \ref{fig_fewsamples_vs_mean_downsampled},which shows the behaviour of three randomly chosen down-sampled samples for each class (i.e., left and right) for both the training and test dataset, confirmes it. 
  Immediately, we can see that both the training and test selected samples are all very noisy and distant from their corresponding mean.
   \begin{figure}[h]
  \begin{center}
+<<<<<<< HEAD
   \includegraphics[width=1\textwidth]{fig/fig5new_fewsamples_mean_downsampled} 
   \caption{Plot of few randomly chosen samples from training and test datasets for channels 3, 10 and 25.
   Samples classified as 0 (i.e., ``right'') are plotted in red, while   samples classified as 1 (i.e., ``left'') are plotted in blue.
   The down-sampled averages corresponding to the training and test dataset are also shown in black.
    These plots confirm that the data have a high variability. 
   \label{fig_fewsamples_vs_mean_downsampled}}
+=======
+  \includegraphics[width=1\textwidth]{fig/fig5_fewsamples_mean_downsampled} 
+  \caption{lala\label{fig_fewsamples_vs_mean_downsampled}}
+>>>>>>> 7a21b3a290c827ff4e64b8e95193618b4002ef1f
   \end{center}
   \end{figure}
   
  Even if we understand that the average is not a sufficient meaningful quantity to describe a complex dataset, the high variability of data makes us believe that this apparently simple two-class 1D classification problem, will instead be quite challenging. 
+<<<<<<< HEAD
   In order to reduce the discrepancies, we  normalise the training dataset using its mean and standard deviation for all channels. 
   The same values are used for the test dataset. 
   
 Driven by the poor accuracy of the results obtained with the methods proposed in the next section, we decide to include a \emph{data-augmentation} strategy, which can be seen as a way of preprocesing the dataset and reduce the generalisation error \cite{goodfellow2016deep}. 
+=======
+  In order to ..., we  normalise the training dataset using its mean and standard deviation for all channels. 
+  The same values are used for the test dataset. 
+  
+ Supported by poor accuracy results obtained with the methods proposed in the next section, we decide to introduce here our \emph{data-augmentation} strategy. 
+>>>>>>> 7a21b3a290c827ff4e64b8e95193618b4002ef1f
 In particular, we exploit the 1000 Hz dataset to extract not one, but 10  signals with frequency 100 Hz. 
 In this way, our training dataset has the following dimensions: 3160 samples, 28 channels, 50 time-steps. 
 We considered the possibility of extending the data-augmentation strategy to the test dataset to further increase the dimension of our training dataset by including some samples from the test dataset after shuffling. 
@@ -127,6 +149,7 @@ However, we soon realised that this would imply solving an oversimplified proble
 We therefore apply the data-augmentation strategy only to the training dataset. 
 
 
+<<<<<<< HEAD
 Finally, driven by the results already published for this dataset, known as dataset VI in the BCI competition \cite{bci_ii}, and supported by other studies (see e.g. \cite{schirrmeister2017deep}), we propose a preprocessing strategy to reduce both the generalisation error and the size of the model needed to fit the training set.
 Indeed, by reducing the noise in the data, i.e., by increasing the signal-to-noise ration, we aim at reducing the amount of variation that the model has to take into account \cite{goodfellow2016deep} and thus . 
 A \emph{filtering preprocessing} technique is therefore applied to our  final model, as explained in Section \ref{sec_themodel}.
@@ -147,6 +170,13 @@ Figure \ref{fig_smoothig_savgol} shows ....TODO
 
  
  \section{Models we tried and why they don't work}\label{sec_allmodel}
+=======
+Finally, supported by the results already published for this dataset, known as dataset VI in the BCI competition \cite{bci_ii}, and by other studies (see e.g. \cite{schirrmeister2017deep}), we propose a preprocessing strategy. 
+In particular we introduce a filtering for the signals that will be used on our final model, as explained in Section \ref{sec_themodel}.
+TODO!!!!!
+
+ % TOADD ???  - mixed train+test mean? // train only 100 vs train 316 mean? 
+>>>>>>> 7a21b3a290c827ff4e64b8e95193618b4002ef1f
  
  - Linear Perceptron --  Error train vs. test when overfitting 
  
@@ -154,6 +184,7 @@ Figure \ref{fig_smoothig_savgol} shows ....TODO
  
  - Each model is averaged over N times 
  
+<<<<<<< HEAD
  \begin{table}
  \begin{center}
     \begin{tabular}{|  c | c | c  | c |c |}
@@ -178,6 +209,25 @@ Figure \ref{fig_smoothig_savgol} shows ....TODO
         \caption{Test errors}
 \end{center}
 \end{table}
+=======
+ \section{Models we tried and why they don't work}\label{sec_allmodel}
+
+ \begin{center}
+    \begin{tabular}{|  c | c | c  | c |}
+    \hline
+    Number of tirals & Linear Perceptron & MC-DCNNNet bis 3 & ShallowConvNetPredictor eta = 1e-3 hidden = 20 \\ \hline
+    1 & & & \\
+    2 & & & \\
+    3 & & & \\
+    4 & & & \\
+    5 & & & \\
+    6 & & & \\
+        \hline
+    Average & & & \\
+        \hline
+    \end{tabular}
+\end{center}
+>>>>>>> 7a21b3a290c827ff4e64b8e95193618b4002ef1f
 
 
 

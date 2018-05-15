@@ -61,7 +61,6 @@ legend('Mean R 1000Hz','Mean L 1000Hz','Mean R Downsampled','Mean L Downsampled'
 
 set(gca,'fontsize',18)
 
-
 % Downsampled - Plot few random values over time of some channels + mean (train) 
 
 figure
@@ -81,7 +80,6 @@ for i = 1:numel(vec_ch)
    plot(t,data_channels_train_left{vec_ch(i)}(56,:),'b--','Linewidth',1)
    plot(t,data_channels_train_left{vec_ch(i)}(120,:),'b-.','Linewidth',1)
    xlim([0 500])
-   
    plot(t,m_train_r{vec_ch(i)},'k-x','Linewidth',2)
    plot(t,m_train_l{vec_ch(i)},'m->','Linewidth',2)
    xlim([0 500])
@@ -98,6 +96,7 @@ for i = 1:numel(vec_ch)
    if i == 1
        ylabel('Test Dataset','FontWeight','bold')
    end 
+
    hold on
    plot(t,data_channels_test_right{vec_ch(i)}(36,:),'r--','Linewidth',1)
    plot(t,data_channels_test_right{vec_ch(i)}(48,:),'r-.','Linewidth',1)
