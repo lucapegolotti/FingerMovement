@@ -1,48 +1,49 @@
-This is BibTeX, Version 0.99d (TeX Live 2016)
+This is BibTeX, Version 0.99d (TeX Live 2015)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: Proj1_Bigoni_Pegolotti_Ripamonti_.aux
 The style file: abbrv.bst
 Database file #1: mybib_dl.bib
 Warning--to sort, need author or key in bci_ii
-You've used 5 entries,
+Warning--to sort, need author or key in savgol
+You've used 6 entries,
             2118 wiz_defined-function locations,
-            524 strings with 4869 characters,
-and the built_in function-call counts, 2047 in all, are:
-= -- 192
-> -- 128
+            526 strings with 4935 characters,
+and the built_in function-call counts, 2197 in all, are:
+= -- 205
+> -- 129
 < -- 3
-+ -- 51
++ -- 52
 - -- 46
-* -- 146
-:= -- 333
-add.period$ -- 17
-call.type$ -- 5
-change.case$ -- 37
+* -- 151
+:= -- 348
+add.period$ -- 18
+call.type$ -- 6
+change.case$ -- 40
 chr.to.int$ -- 0
-cite$ -- 6
-duplicate$ -- 73
-empty$ -- 142
+cite$ -- 8
+duplicate$ -- 80
+empty$ -- 165
 format.name$ -- 46
-if$ -- 433
+if$ -- 471
 int.to.chr$ -- 0
-int.to.str$ -- 5
+int.to.str$ -- 6
 missing$ -- 5
-newline$ -- 28
+newline$ -- 31
 num.names$ -- 8
-pop$ -- 54
+pop$ -- 60
 preamble$ -- 1
-purify$ -- 33
+purify$ -- 35
 quote$ -- 0
-skip$ -- 52
+skip$ -- 63
 stack$ -- 0
-substring$ -- 81
-swap$ -- 24
+substring$ -- 86
+swap$ -- 25
 text.length$ -- 3
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 18
-warning$ -- 1
+type$ -- 22
+warning$ -- 2
 while$ -- 14
-width$ -- 6
-write$ -- 56
-(There was 1 warning)
+width$ -- 7
+write$ -- 61
+(There were 2 warnings)

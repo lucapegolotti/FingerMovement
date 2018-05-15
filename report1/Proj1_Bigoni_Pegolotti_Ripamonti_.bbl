@@ -3,7 +3,10 @@
 \bibitem{bci_ii}
 {BCI Competition II}.
 \newblock \url{http://www.bbci.de/competition/ii/}.
-\newblock Accessed: 2010-09-30.
+
+\bibitem{savgol}
+{Savitzky-Golay Filter}.
+\newblock \url{https://en.wikipedia.org/wiki/Savitzky-Golay_filter}.
 
 \bibitem{goodfellow2016deep}
 I.~Goodfellow, Y.~Bengio, A.~Courville, and Y.~Bengio.

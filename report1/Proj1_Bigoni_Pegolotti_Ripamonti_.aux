@@ -17,15 +17,17 @@
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
 \citation{bci_ii}
+\providecommand \oddpage@label [2]{}
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}}
 \@writefile{toc}{\contentsline {section}{\numberline {2}Data Visualisation}{1}{section.2}}
 \newlabel{sec_visual}{{2}{1}{Data Visualisation}{section.2}{}}
+\citation{goodfellow2016deep}
 \citation{bci_ii}
 \citation{schirrmeister2017deep}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces lala}}{2}{figure.1}}
-\newlabel{fig_mean_1000hz_vs_downsampled}{{1}{2}{lala}{figure.1}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {3}Models we tried and why they don't work}{2}{section.3}}
-\newlabel{sec_allmodel}{{3}{2}{Models we tried and why they don't work}{section.3}{}}
+\citation{goodfellow2016deep}
+\citation{savgol}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Comparison of training and test datasets averages per channel over 316 and 100 samples, respectively. Three channels (i.e., 3, 10 and 25) are randomly chosen, but the results generalise to all. Each plot shows the mean of the samples with output 0 (i.e., classified as ``right'') and those with output 1 (i.e., classified as ``left''). The means of the signals sampled with 1000 Hz are plotted in red and blue, while those of the signals downsampled to 100 Hz ar plotted in black and magenta. For some channels (e.g., channel 3) the down-sampled averages present a lower variability than those for the signals sampled at 1000 Hz. In all cases, the averages of the training set are distinctively different from those of the test set. }}{2}{figure.1}}
+\newlabel{fig_mean_1000hz_vs_downsampled}{{1}{2}{Comparison of training and test datasets averages per channel over 316 and 100 samples, respectively. Three channels (i.e., 3, 10 and 25) are randomly chosen, but the results generalise to all. Each plot shows the mean of the samples with output 0 (i.e., classified as ``right'') and those with output 1 (i.e., classified as ``left''). The means of the signals sampled with 1000 Hz are plotted in red and blue, while those of the signals downsampled to 100 Hz ar plotted in black and magenta. For some channels (e.g., channel 3) the down-sampled averages present a lower variability than those for the signals sampled at 1000 Hz. In all cases, the averages of the training set are distinctively different from those of the test set}{figure.1}{}}
 \citation{zheng2014time}
 \citation{schirrmeister2017deep}
 \citation{wang2018data}
@@ -33,13 +35,17 @@
 \bibstyle{abbrv}
 \bibdata{mybib_dl}
 \bibcite{bci_ii}{1}
-\bibcite{goodfellow2016deep}{2}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces lala}}{3}{figure.2}}
-\newlabel{fig_fewsamples_vs_mean_downsampled}{{2}{3}{lala}{figure.2}{}}
+\bibcite{savgol}{2}
+\bibcite{goodfellow2016deep}{3}
+\bibcite{schirrmeister2017deep}{4}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Plot of few randomly chosen samples from training and test datasets for channels 3, 10 and 25. Samples classified as 0 (i.e., ``right'') are plotted in red, while samples classified as 1 (i.e., ``left'') are plotted in blue. The down-sampled averages corresponding to the training and test dataset are also shown in black. These plots confirm that the data have a high variability. }}{3}{figure.2}}
+\newlabel{fig_fewsamples_vs_mean_downsampled}{{2}{3}{Plot of few randomly chosen samples from training and test datasets for channels 3, 10 and 25. Samples classified as 0 (i.e., ``right'') are plotted in red, while samples classified as 1 (i.e., ``left'') are plotted in blue. The down-sampled averages corresponding to the training and test dataset are also shown in black. These plots confirm that the data have a high variability}{figure.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Models we tried and why they don't work}{3}{section.3}}
+\newlabel{sec_allmodel}{{3}{3}{Models we tried and why they don't work}{section.3}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {4}Model that works best}{3}{section.4}}
 \newlabel{sec_themodel}{{4}{3}{Model that works best}{section.4}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion}{3}{section.5}}
 \newlabel{sec_conclusion}{{5}{3}{Conclusion}{section.5}{}}
-\bibcite{schirrmeister2017deep}{3}
-\bibcite{wang2018data}{4}
-\bibcite{zheng2014time}{5}
+\bibcite{wang2018data}{5}
+\bibcite{zheng2014time}{6}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Test errors}}{4}{table.1}}
