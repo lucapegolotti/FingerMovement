@@ -38,10 +38,10 @@ def create_validation(train_input, train_target, percentage, data_aug):
         train_input = train_input[indices_train,:,:]
         train_target = train_target[indices_train]
 
-    print(train_input.size())
-    print(validation_input.size())
-    print(train_target.size())
-    print(validation_target.size())
+    # print(train_input.size())
+    # print(validation_input.size())
+    # print(train_target.size())
+    # print(validation_target.size())
     return train_input, train_target, validation_input, validation_target.float()
 
 def load_data(data_aug=False,data_long=False,filtered=False,filtered_load=False):
@@ -49,19 +49,27 @@ def load_data(data_aug=False,data_long=False,filtered=False,filtered_load=False)
         one_khz = True
     else:
         one_khz = False
-    train_input, train_target = bci.load(root='./data_bci',one_khz=one_khz)
 
+    train_input, train_target = bci.load(root='./data_bci',one_khz=one_khz)
     test_input, test_target = bci.load(root='./data_bci',train=False,one_khz=data_long)
 
     #print(np.convolve(test_input[0,1,:],np.array([1,1,1,1,1])/5,mode='valid'))
 
 
+
+
+    train_input, train_target, validation_input, validation_target = create_validation(train_input, train_target, 0.1, data_aug)
+
+    # Compute sizes
     train_samples = train_input.size(0)
     test_samples = test_input.size(0)
+    validation_samples = validation_input.size(0)
+    
     channels = train_input.size(1)
     time_steps = train_input.size(2)
 
-    train_input, train_target, validation_input, validation_target = create_validation(train_input, train_target, 0.2, data_aug)
+
+
 
     if filtered:
 
@@ -72,14 +80,15 @@ def load_data(data_aug=False,data_long=False,filtered=False,filtered_load=False)
                 mask_size = 5
                 mask = np.ones(mask_size)/mask_size
         else:
-            window = 5
-            order_poly = 2
+            window = 7
+            order_poly = 3
 
 
         if filtered_load ==0:
 
             test_input_smooth_mat = np.zeros((test_samples,channels*time_steps))
             train_input_smooth_mat = np.zeros((train_samples,channels*time_steps))
+            validation_input_smooth_mat = np.zeros((validation_samples,channels*time_steps))
 
             for i in range(test_samples):
                 print(i)
@@ -99,41 +108,62 @@ def load_data(data_aug=False,data_long=False,filtered=False,filtered_load=False)
                         train_input_smooth_mat[i,j*time_steps:(j+1)*time_steps] = savgol_filter(train_input[i,j,:].numpy(),window,order_poly)
                     train_input[i,j,:] = torch.tensor(train_input_smooth_mat[i,j*time_steps:(j+1)*time_steps])
 
+            for i in range(validation_samples):
+                print(i)
+                for j in range(channels):
+                    if option == 0:
+                        validation_input_smooth_mat[i,j*time_steps:(j+1)*time_steps] = np.convolve(validation_input[i,j,:],mask,mode='same')
+                    else:
+                        validation_input_smooth_mat[i,j*time_steps:(j+1)*time_steps] = savgol_filter(validation_input[i,j,:].numpy(),window,order_poly)
+                    validation_input[i,j,:] = torch.tensor(validation_input_smooth_mat[i,j*time_steps:(j+1)*time_steps])
+
 
             # Save the text file of smoothed data
             filename_test = 'data_bci/test_smooth'+str(option)
             filename_train = 'data_bci/train_smooth'+str(option)
+            filename_validation = 'data_bci/validation_smooth'+str(option)
 
             if option == 0:
                 filename_test=filename_test+'_mask'+str(mask_size)
                 filename_train=filename_train+'_mask'+str(mask_size)
+                filename_validation=filename_validation+'_mask'+str(mask_size)
             else:
                 filename_test=filename_test+'_w'+str(window)+'_or'+str(order_poly)
                 filename_train=filename_train+'_w'+str(window)+'_or'+str(order_poly)
+                filename_validation=filename_validation+'_w'+str(window)+'_or'+str(order_poly)
 
             torch.save(test_input,filename_test+'.pt')
             torch.save(train_input,filename_train+'.pt')
+            torch.save(validation_input,filename_validation+'.pt')
 
 
             np.savetxt(filename_test+'.txt', test_input_smooth_mat)
             np.savetxt(filename_train+'.txt', train_input_smooth_mat)
+            np.savetxt(filename_validation+'.txt', validation_input_smooth_mat)
+
+
+
 
 
         else: # load only
 
             filename_test = 'data_bci/train_smooth'+str(option)
             filename_train = 'data_bci/train_smooth'+str(option)
+            filename_validation = 'data_bci/validation_smooth'+str(option)
 
             if option == 0:
                 filename_test=filename_test+'_mask'+str(mask_size)
                 filename_train=filename_train+'_mask'+str(mask_size)
+                filename_validation=filename_validation+'_mask'+str(mask_size)
             else:
                 filename_test=filename_test+'_w'+str(window)+'_or'+str(order_poly)
                 filename_train=filename_train+'_w'+str(window)+'_or'+str(order_poly)
+                filename_validation=filename_validation+'_w'+str(window)+'_or'+str(order_poly)
 
 
             torch.load(filename_test+'.pt')
             torch.load(filename_train+'.pt')
+            torch.load(filename_validation+'.pt')
 
 
     # NORMALIZE

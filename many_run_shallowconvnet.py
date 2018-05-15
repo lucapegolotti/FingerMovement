@@ -12,15 +12,13 @@ import models as models
 
 import random
 
+
+data_aug = False
+filtered = False
+
 torch.manual_seed(np.random.randint(0,100000))
 
-# parameters = ParametersSampler()
-# parameters.showMe()
-
-outputManager = OutputManager()
-
-train_input, train_target, test_input, test_target, validation_input, validation_target = loader.load_data(data_aug=False,data_long=False,filtered=True,filtered_load=False)
-exit()
+train_input, train_target, test_input, test_target, validation_input, validation_target = loader.load_data(data_aug=data_aug,filtered=filtered)
 
 train_target = train_target.type(torch.FloatTensor)
 test_target = test_target.type(torch.FloatTensor)
@@ -34,32 +32,32 @@ def compute_nb_errors(model, input, target):
     y = model.forward(input)
     indicesy = np.argmax(y.data,1).float()
 
+    # print(target.data.size())
+    # print(indicesy.size())
     nberrors = np.linalg.norm(indicesy - target.data,0)
     model.train(True)
     return nberrors
 
 #def train_model(model, train_input, train_target, validation_input, validation_target, eta, mini_batch_size):
-def train_model(model, train_input, train_target, validation_input, validation_target, test_input, test_target, eta, mini_batch_size):
+def train_model(model, nepochs, train_input, train_target, validation_input, validation_target, test_input, test_target, eta, mini_batch_size, l2_parameter, scale):
     initial_mini_batch_size = mini_batch_size
 
     train_size = train_input.size(0)
     test_size = test_input.size(0)
     validation_size = validation_input.size()
 
-    # n_epochs = parameters.getParameter('epochs')
-    n_epochs = 1000
-
     # optimizer = torch.optim.SGD(model.parameters(), lr = eta)
-    optimizer = torch.optim.Adam(model.parameters(), lr = eta)
-    scheduler = adaptive_time_step(optimizer)
+    optimizer = torch.optim.Adam(model.parameters(), lr = eta, weight_decay=l2_parameter)
+    scheduler = adaptive_time_step(optimizer,scale)
 
-    penalty_parameter_2 = 0.001
-    penalty_parameter_1 = 0.001
+    if validation_size[0] is not 0:
+        output_array = np.zeros(shape=(nepochs,5))
+    else:
+        output_array = np.zeros(shape=(nepochs,4))
 
-    for e in range(0, n_epochs):
+    for e in range(0, nepochs):
         mini_batch_size = initial_mini_batch_size
         sum_loss = 0
-        # We do this with mini-batches
         for b in range(0, train_input.size(0), mini_batch_size):
 
             mini_batch_size = min(mini_batch_size, train_input.size(0) - b)
@@ -67,13 +65,6 @@ def train_model(model, train_input, train_target, validation_input, validation_t
             train_target_narrowed = train_target.narrow(0, b, mini_batch_size).long()
 
             loss = criterion(output, train_target_narrowed)
-            # l2_penalty = l2_regularization(model.parameters(),penalty_parameter_2)
-            # l1_penalty = l1_regularization(model.parameters(),penalty_parameter_1)
-
-            l2_penalty = 1e-10
-            l1_penalty = 1e-10
-
-            loss += l2_penalty+l1_penalty
 
             scheduler.step()
 
@@ -81,8 +72,6 @@ def train_model(model, train_input, train_target, validation_input, validation_t
             model.zero_grad()
             loss.backward()
             optimizer.step()
-            #for p in model.parameters():
-            #    p.data.sub_(eta * p.grad.data)
 
         train_error = compute_nb_errors(model,train_input, train_target)
         test_error = compute_nb_errors(model,test_input, test_target)
@@ -90,9 +79,16 @@ def train_model(model, train_input, train_target, validation_input, validation_t
         print("Loss function = {0:.8f}".format(sum_loss))
         print("Train error: {0:.2f}%".format((train_error/train_size)*100))
         print("Test error: {0:.2f}%".format((test_error/test_size)*100))
+        output_array[e,0] = e
+        output_array[e,1] = sum_loss
+        output_array[e,2] = (train_error/train_size)*100
+        output_array[e,3] = (test_error/test_size)*100
         if validation_size[0] is not 0:
             validation_error = compute_nb_errors(model,validation_input, validation_target)
             print("Validation error: {0:.2f}%".format((validation_error/validation_size[0])*100))
+            output_array[e,4] = (validation_error/validation_size[0])*100
+
+    return output_array
 
 def l2_regularization(parameters,penalty_parameter):
     # See Book (pg.116,Chapter 5)
@@ -112,14 +108,14 @@ def init_weights(layer):
     if type(layer) == nn.Linear:
         torch.nn.init.xavier_uniform(layer.weight)
 
-def adaptive_time_step(optimizer):
+def adaptive_time_step(optimizer,scale):
     # See http://pytorch.org/docs/master/optim.html#how-to-adjust-learning-rate
     # Section "How to adjust Learning Rate"
 
     # Lambda LR
     # Step LR
     step_size = 30
-    gamma = 0.95
+    gamma = scale
     last_epoch = -1
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size, gamma, last_epoch)
 
@@ -133,45 +129,45 @@ def adaptive_time_step(optimizer):
 
     return scheduler
 
-def create_validation(train_input, train_output, percentage):
-    samples = train_input.size(0)
-    validation_size = round(percentage * samples)
+outputManager = OutputManager(data_aug=data_aug,filtered=filtered)
+count=0
+while 1:
 
-    indices = torch.LongTensor(np.random.choice(samples, samples))
+    # save value of parameters
+    batch_size = int(train_size * 0.1989409558801259)
+    eta = 0.001
+    dropout = 0.35
+    size_conv1 = 19
+    size_conv2 = 16
+    size_kernel = 5
+    size_hidden_layer = 108
+    l2_parameter = 0.00012739304809129267
+    scale = 0.9
 
-    if (percentage != 0):
-        validation_input = train_input[indices[0:validation_size],:,:]
-        validation_output = train_output[indices[0:validation_size]]
-    else:
-        validation_input = torch.LongTensor([]);
-        validation_output = torch.LongTensor([]);
+    nepochs = 200
 
-    train_input = train_input[indices[validation_size+1:samples],:,:]
-    train_output = train_output[indices[validation_size+1:samples]]
 
-    return train_input, train_output, validation_input, validation_output
+    print("Starting run number " + str(count))
+    train_input, train_target = Variable(train_input), Variable(train_target)
+    test_input, test_target = Variable(test_input), Variable(test_target)
+    validation_input, validation_target = Variable(validation_input), Variable(validation_target)
 
-train_input, train_target = Variable(train_input), Variable(train_target)
-test_input, test_target = Variable(test_input), Variable(test_target)
+    model, criterion = models.ShallowConvNetPredictorWithDropout(size_hidden_layer,size_kernel,size_conv1,size_conv2,dropout), nn.CrossEntropyLoss()
+    model.apply(init_weights)
 
-train_input, train_target, validation_input, validation_output = create_validation(train_input, train_target, 0)
+    output = train_model(model, nepochs, train_input, train_target, validation_input, validation_target, test_input, test_target, eta, batch_size, l2_parameter, scale)
 
-model, criterion = models.ShallowConvNetPredictor(), nn.CrossEntropyLoss()
-model.apply(init_weights)
+    nberrors_train = compute_nb_errors(model,train_input, train_target)
+    nberrors_test = compute_nb_errors(model,test_input, test_target)
 
-eta, mini_batch_size = 0.001, 79
-eta, mini_batch_size = 1e-3, 79
-train_model(model, train_input, train_target, validation_input, validation_output, test_input, test_target, eta, mini_batch_size)
+    train_error = (nberrors_train/train_size)*100
+    test_error = (nberrors_test/test_size)*100
 
-nberrors_train = compute_nb_errors(model,train_input, train_target)
-nberrors_test = compute_nb_errors(model,test_input, test_target)
+    train_error_string = "Train error: {0:.2f}%".format(train_error)
+    test_error_string = "Test error: {0:.2f}%".format(test_error)
+    #print(train_error_string)
+    #print(test_error_string)
 
-train_error = (nberrors_train/train_size)*100
-test_error = (nberrors_test/test_size)*100
+    outputManager.write_one(output,count)
 
-train_error_string = "Train error: {0:.2f}%".format(train_error)
-test_error_string = "Test error: {0:.2f}%".format(test_error)
-print(train_error_string)
-print(test_error_string)
-
-#outputManager.write(train_error_string,test_error_string,parameters)
+    count += 1
