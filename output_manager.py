@@ -10,9 +10,9 @@ import datetime
 
 class OutputManager():
     def __init__(self,data_aug=False,filtered=False):
-        if not os.path.exists('output'):
-            os.makedirs('output')
-        self.output_dir = "output/out" + datetime.datetime.now().strftime("%y_%m_%d_%H_%M_%S") +"_DA_"+str(data_aug)+"_filtered_"+str(filtered)
+        if not os.path.exists('output_SGD'):
+            os.makedirs('output_SGD')
+        self.output_dir = "output_SGD/out" + datetime.datetime.now().strftime("%y_%m_%d_%H_%M_%S") +"_DA_"+str(data_aug)+"_filtered_"+str(filtered)
         os.makedirs(self.output_dir)
 
     def write(self, parameters_sampler, outputs):

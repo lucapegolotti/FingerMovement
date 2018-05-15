@@ -12,13 +12,9 @@ import models as models
 
 import random
 
-
-data_aug = True
-filtered = True
-
 torch.manual_seed(np.random.randint(0,100000))
 
-train_input, train_target, test_input, test_target, validation_input, validation_target = loader.load_data(data_aug=data_aug,filtered=filtered)
+train_input, train_target, test_input, test_target, validation_input, validation_target = loader.load_data(data_aug=False,filtered=True,filtered_load=True)
 
 train_target = train_target.type(torch.FloatTensor)
 test_target = test_target.type(torch.FloatTensor)
@@ -39,9 +35,8 @@ def compute_nb_errors(model, input, target):
     return nberrors
 
 #def train_model(model, train_input, train_target, validation_input, validation_target, eta, mini_batch_size):
-def train_model(model, nepochs, train_input, train_target, validation_input, validation_target, test_input, test_target, eta, mini_batch_size, l2_parameter, scale):
-    initial_mini_batch_size = mini_batch_size
-
+def train_model(model, train_input, train_target, validation_input, validation_target, test_input, test_target, eta, perc_batch_size, l2_parameter, scale):
+    
     train_size = train_input.size(0)
     test_size = test_input.size(0)
     validation_size = validation_input.size()
@@ -50,28 +45,32 @@ def train_model(model, nepochs, train_input, train_target, validation_input, val
     optimizer = torch.optim.Adam(model.parameters(), lr = eta, weight_decay=l2_parameter)
     scheduler = adaptive_time_step(optimizer,scale)
 
+    nepochs = int(np.log(train_input.size(0))/perc_batch_size*7)
+    
+
     if validation_size[0] is not 0:
         output_array = np.zeros(shape=(nepochs,5))
     else:
         output_array = np.zeros(shape=(nepochs,4))
 
     for e in range(0, nepochs):
-        mini_batch_size = initial_mini_batch_size
+        mini_batch_size = int(train_input.size(0)*perc_batch_size)
         sum_loss = 0
-        for b in range(0, train_input.size(0), mini_batch_size):
+        
+        shuffle_indexes_minibatch = torch.randperm(train_input.size(0))[0:mini_batch_size]
+        train_input_minibatch = train_input[shuffle_indexes_minibatch]
+        train_target_minibatch = train_target[shuffle_indexes_minibatch].long()
+        
+        output = model.forward(train_input_minibatch)
 
-            mini_batch_size = min(mini_batch_size, train_input.size(0) - b)
-            output = model.forward(train_input.narrow(0, b, mini_batch_size))
-            train_target_narrowed = train_target.narrow(0, b, mini_batch_size).long()
+        loss = criterion(output, train_target_minibatch)
 
-            loss = criterion(output, train_target_narrowed)
+        scheduler.step()
 
-            scheduler.step()
-
-            sum_loss = sum_loss + loss.data[0]
-            model.zero_grad()
-            loss.backward()
-            optimizer.step()
+        sum_loss = sum_loss + loss.data[0]
+        model.zero_grad()
+        loss.backward()
+        optimizer.step()
 
         train_error = compute_nb_errors(model,train_input, train_target)
         test_error = compute_nb_errors(model,test_input, test_target)
@@ -129,45 +128,49 @@ def adaptive_time_step(optimizer,scale):
 
     return scheduler
 
-outputManager = OutputManager(data_aug=data_aug,filtered=filtered)
-count=0
 while 1:
+    parameters = ParametersSampler()
 
-    # hard-coded best set of parameters
-    batch_size = int(train_size * 0.1989409558801259)
-    eta = 0.001
-    dropout = 0.35
-    size_conv1 = 19
-    size_conv2 = 16
-    size_kernel = 5
-    size_hidden_layer = 108
-    l2_parameter = 0.00012739304809129267
-    scale = 0.9
+    parameters.showMe()
 
-    nepochs = 400
+    # save value of parameters
+    batch_size = parameters.getParameter("batch_size")
+    eta = parameters.getParameter("eta")
+    dropout = parameters.getParameter("dropout")
+    size_conv1 = parameters.getParameter("size_conv1")
+    size_conv2 = parameters.getParameter("size_conv2")
+    size_kernel = parameters.getParameter("size_kernel")
+    size_hidden_layer = parameters.getParameter("size_hidden_layer")
+    l2_parameter = parameters.getParameter("l2_parameter")
+    scale = parameters.getParameter("scale")
 
+    
 
-    print("Starting run number " + str(count))
-    train_input, train_target = Variable(train_input), Variable(train_target)
-    test_input, test_target = Variable(test_input), Variable(test_target)
-    validation_input, validation_target = Variable(validation_input), Variable(validation_target)
+    outputs = []
 
-    model, criterion = models.ShallowConvNetPredictorWithDropout(size_hidden_layer,size_kernel,size_conv1,size_conv2,dropout), nn.CrossEntropyLoss()
-    model.apply(init_weights)
+    for run in range(10):
+        print("Starting run number " + str(run))
+        train_input, train_target = Variable(train_input), Variable(train_target)
+        test_input, test_target = Variable(test_input), Variable(test_target)
+        validation_input, validation_target = Variable(validation_input), Variable(validation_target)
 
-    output = train_model(model, nepochs, train_input, train_target, validation_input, validation_target, test_input, test_target, eta, batch_size, l2_parameter, scale)
+        model, criterion = models.ShallowConvNetPredictorWithDropout(size_hidden_layer,size_kernel,size_conv1,size_conv2,dropout), nn.CrossEntropyLoss()
+        model.apply(init_weights)
+        print(train_input.size())
+        output = train_model(model, train_input, train_target, validation_input, validation_target, test_input, test_target, eta, batch_size, l2_parameter, scale)
 
-    nberrors_train = compute_nb_errors(model,train_input, train_target)
-    nberrors_test = compute_nb_errors(model,test_input, test_target)
+        outputs.append(output)
 
-    train_error = (nberrors_train/train_size)*100
-    test_error = (nberrors_test/test_size)*100
+        nberrors_train = compute_nb_errors(model,train_input, train_target)
+        nberrors_test = compute_nb_errors(model,test_input, test_target)
 
-    train_error_string = "Train error: {0:.2f}%".format(train_error)
-    test_error_string = "Test error: {0:.2f}%".format(test_error)
-    #print(train_error_string)
-    #print(test_error_string)
+        train_error = (nberrors_train/train_size)*100
+        test_error = (nberrors_test/test_size)*100
 
-    outputManager.write_one(output,count)
+        train_error_string = "Train error: {0:.2f}%".format(train_error)
+        test_error_string = "Test error: {0:.2f}%".format(test_error)
+        print(train_error_string)
+        print(test_error_string)
 
-    count += 1
+    outputManager = OutputManager()
+    outputManager.write(parameters,outputs)
