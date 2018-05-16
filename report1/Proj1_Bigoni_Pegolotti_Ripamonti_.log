@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.11.29)  16 MAY 2018 03:10
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.11.29)  16 MAY 2018 10:08
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -976,13 +976,13 @@ File: fig/conv3.pdf Graphic file (type pdf)
 Package pdftex.def Info: fig/conv3.pdf used on input line 176.
 (pdftex.def)             Requested size: 443.57848pt x 68.01277pt.
 
-(./Proj1_Bigoni_Pegolotti_Ripamonti_.bbl [4 <./fig/conv3.pdf>]) [5]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 230.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 230.
+[4 <./fig/conv3.pdf>] (./Proj1_Bigoni_Pegolotti_Ripamonti_.bbl) [5]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 234.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 234.
 
 (./Proj1_Bigoni_Pegolotti_Ripamonti_.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 230.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 230.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 234.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 234.
 Package rerunfilecheck Info: File `Proj1_Bigoni_Pegolotti_Ripamonti_.out' has n
 ot changed.
 (rerunfilecheck)             Checksum: AE4B8C586F8584EDD5F1A7B8594900BE;256.
@@ -990,16 +990,16 @@ ot changed.
 
 LaTeX Warning: There were undefined references.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 230.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 234.
  ) 
 Here is how much of TeX's memory you used:
- 21339 strings out of 493089
- 426831 string characters out of 6134841
- 522921 words of memory out of 5000000
- 24379 multiletter control sequences out of 15000+600000
+ 21340 strings out of 493089
+ 426847 string characters out of 6134841
+ 523922 words of memory out of 5000000
+ 24380 multiletter control sequences out of 15000+600000
  11710 words of font info for 46 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,11n,67p,884b,437s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 55i,11n,67p,884b,387s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
 </usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
@@ -1016,7 +1016,7 @@ ve/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive
 015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/201
 5/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2015
 /texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on Proj1_Bigoni_Pegolotti_Ripamonti_.pdf (5 pages, 1898920 bytes
+Output written on Proj1_Bigoni_Pegolotti_Ripamonti_.pdf (5 pages, 1899742 bytes
 ).
 PDF statistics:
  663 PDF objects out of 1000 (max. 8388607)

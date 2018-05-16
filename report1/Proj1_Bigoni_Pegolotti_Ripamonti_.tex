@@ -156,21 +156,21 @@ We therefore apply the data-augmentation strategy only to the training dataset.}
  
 In the following, we provide a small description of each model we considered. The diagrams representing the graph structures show the dimensions of the input and output tensor of each module composing the networks except for the non-linear nodes, which do not modify the dimensionality of the inputs; $n$ is the number of samples of the input.
 \begin{itemize}
-\item Linear perceptron: the simplest model one could devise for a classification problem is the linear perceptron:  given an input tensor $x$, the output is computed by the model as $y_{ij} = \sum_{k}x_{ik} A_{jk} + b_{j}$, where $A$ is the matrix of weights, and $b$ is the bias vector.
-\item Simple convolutional linear network:
+\item Linear perceptron (M1): the simplest model one could devise for a classification problem is the linear perceptron:  given an input tensor $x$, the output is computed by the model as $y_{ij} = \sum_{k}x_{ik} A_{jk} + b_{j}$, where $A$ is the matrix of weights, and $b$ is the bias vector.
+\item Simple convolutional linear network (M2):
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth, clip=true,trim=100 300 295 230]{fig/conv1.pdf}
 \end{figure}
 
-\item Multichannel deep convolutional neural network + linear perceptron:
+\item Multichannel deep convolutional neural network + linear perceptron (M3):
 \begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth, clip=true,trim=30 40 70 50]{fig/conv2.pdf}
 \end{figure}
 
 The convolutional layer in this model is such that that different masks are applied to each channel; at the implementation level, this is achieved by setting the \verb|groups| parameter equal to 28 in the constructor of the model. Convolutions of this kind are employed to study multichannel uni-dimensional time-series also in \cite{zheng2014time}.
-\item Shallow convolutional neural network:
+\item Shallow convolutional neural network (M4):
 \begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth, clip=true,trim=80 200 520 200]{fig/conv3.pdf}
@@ -180,7 +180,11 @@ In this network, the first and the second convolutions operate in the dimension 
 \end{itemize}
 The models are tested on the standard downsampled and augmented datasets to evaluate their performance. We use the stochastic gradient descent for the optimization step, with bash size equal to 100 or to 1000 when the train set is composed by 316 or 3160 samples respectively. The learning rates are $10^{-1}$ for the linear perceptron and $10^{-3}$ for the other three models.
 
-Table~\ref{tab_results} shows the performance of the four models in terms of error on the test dataset after 1000 iterations of the stochastic gradient descent. Surprisingly, the linear perceptron performs relatively well.
+Table~\ref{tab_results} shows the performance of the four models in terms of error on the test dataset after 1000 iterations of the stochastic gradient descent. Surprisingly, the linear perceptron (M1) performs better than (M2) and (M3), leading to a smaller average error over all the runs and also to a smaller variance of the result. In the non-agumented dataset, however, the model that ensures in our experience a smaller minimum error and a smaller error on average is the shallow convolutional neural network.
+
+Augmenting the dataset leads to a slightly smaller error for M1, but to a considerable loss of accuracy for the other three models. It is likely that, with a different choice of parameters (size of convolutional and pool nodes, kernels \ldots), the advantage of using larger datasets could be exploited also for M2, M3 and M4. 
+
+Since the shallow convolutional network (M4) showed the most promising reults in these test runs, in the following Section we decide to focus on optimizing this particular network. It is important to notice that our findings are greatly determined by the choices of parameters for each of the networks we considered, and it is possible that other combinations for M2 and M3 could lead to smaller errors.
 
  \begin{table}
  \begin{center}
