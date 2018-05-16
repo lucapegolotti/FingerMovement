@@ -87,7 +87,7 @@ def load_data(data_aug=False, data_long=False, filtered=False, \
         train_target = torch.cat(train_target_list,dim=0)
 
     else:
-        if (percentage != 0):
+        if (cv_perc != 0):
             # Select the samples corresponding to validation indices
             validation_input = train_input[indices_validation,:,:]
             validation_target = train_target[indices_validation]
@@ -100,106 +100,85 @@ def load_data(data_aug=False, data_long=False, filtered=False, \
         train_input = train_input[indices_train,:,:]
         train_target = train_target[indices_train]
 
+    # Recompute the number of time_steps as it might have changed 
     channels = train_input.size(1)
     time_steps = train_input.size(2)
 
+
+    # Add smoothing
     if filtered:
 
-        # Select one of the available masks
-        #option = 0  # mask
-        option = 1 # savgol filter
+        # We have two options for smoothing: a convolutional mask (option=0) or 
+        # the savgol filter (option=1)
+        option = 1
 
-        if option == 1:
+        if option == 0:
                 mask_size = 5
                 mask = np.ones(mask_size)/mask_size
-        else:
-            window = 7
-            order_poly = 3
+        elif option == 1:
+            # window represent the number of points over which the filtering acts
+            # order_poly is the order of the polynomial that fits these data using 
+            # a min last squares method
+            window, order_poly = 3, 2
 
-        #TODO: puoi spiegare quello che fai qui? @Cate
+        # Prepare filenames for saving or loading
+        filename_test = 'data_bci/test_smooth'+str(option)
+        filename_train = 'data_bci/train'+str(1-cv_perc)+'_smooth'+str(option)
+        filename_validation = 'data_bci/validation'+str(cv_perc)+'_smooth'+str(option)
+        filename = [filename_test, filename_train, filename_validation]
+
+        # If the filtered data have not already been created and saved in data_bci
         if filtered_load == 0:
 
-            test_input_smooth_mat = np.zeros((test_samples,channels*time_steps))
-            train_input_smooth_mat = np.zeros((train_samples,channels*time_steps))
-            validation_input_smooth_mat = np.zeros((validation_samples,channels*time_steps))
+            set_list = [test_input, train_input, validation_input]
 
-            for i in range(test_samples):
-                print(i)
-                for j in range(channels):
-                    if option == 0:
-                        test_input_smooth_mat[i,j*time_steps:(j+1)*time_steps] = np.convolve(test_input[i,j,:],mask,mode='same')
-                    else:
-                        test_input_smooth_mat[i,j*time_steps:(j+1)*time_steps] = savgol_filter(test_input[i,j,:].numpy(),window,order_poly)
-                    test_input[i,j,:] = torch.tensor(test_input_smooth_mat[i,j*time_steps:(j+1)*time_steps])
+            # The following procedure is applied to all three datasets (test, 
+            # train and validation):
+            # 1) Create numpy matrices to apply np.convolve or savgol_filter 
+            # 2) For all samples and all channels apply the smoothing
+            # 3) Copy in a torch tensor 
+            for set_index in range(3):
+                cur_set = set_list[set_index]
+                set_size = cur_set.size(0)
+                smooth_mat = np.zeros((set_size,channels*time_steps))
+                for i in range(set_size):
+                    print(i)
+                    for j in range(channels):
+                        if option == 0:
+                            smooth_mat[i,j*time_steps:(j+1)*time_steps] = np.convolve(cur_set[i,j,:],mask,mode='same')
+                        else:
+                            smooth_mat[i,j*time_steps:(j+1)*time_steps] = savgol_filter(cur_set[i,j,:].numpy(),window,order_poly)
+                        cur_set[i,j,:] = torch.tensor(smooth_mat[i,j*time_steps:(j+1)*time_steps])
 
-            for i in range(train_samples):
-                print(i)
-                for j in range(channels):
-                    if option == 0:
-                        train_input_smooth_mat[i,j*time_steps:(j+1)*time_steps] = np.convolve(train_input[i,j,:],mask,mode='same')
-                    else:
-                        train_input_smooth_mat[i,j*time_steps:(j+1)*time_steps] = savgol_filter(train_input[i,j,:].numpy(),window,order_poly)
-                    train_input[i,j,:] = torch.tensor(train_input_smooth_mat[i,j*time_steps:(j+1)*time_steps])
+                # Save the text file of smoothed data & the torch tensor for 
+                # possible direct loading 
+                if option == 0:
+                    filename[set_index] = filename[set_index]+'_mask'+str(mask_size)
+                elif option == 1: 
+                    filename[set_index] = filename[set_index]+'_w'+str(window)+'_or'+str(order_poly)
+                
+                torch.save(set_list[set_index],filename[set_index]+'.pt')
+                np.savetxt(filename[set_index]+'.txt', smooth_mat)
 
-            for i in range(validation_samples):
-                print(i)
-                for j in range(channels):
-                    if option == 0:
-                        validation_input_smooth_mat[i,j*time_steps:(j+1)*time_steps] = np.convolve(validation_input[i,j,:],mask,mode='same')
-                    else:
-                        validation_input_smooth_mat[i,j*time_steps:(j+1)*time_steps] = savgol_filter(validation_input[i,j,:].numpy(),window,order_poly)
-                    validation_input[i,j,:] = torch.tensor(validation_input_smooth_mat[i,j*time_steps:(j+1)*time_steps])
+        # Else, simply load the precomputed smoothed sets
+        else: 
+            for set_index in range(3):
+                if option == 0:
+                    filename[set_index] = filename[set_index]+'_mask'+str(mask_size)
+                elif option == 1: 
+                    filename[set_index] = filename[set_index]+'_w'+str(window)+'_or'+str(order_poly)
 
-            # Save the text file of smoothed data
-            filename_test = 'data_bci/test_smooth'+str(option)
-            filename_train = 'data_bci/train_smooth'+str(option)
-            filename_validation = 'data_bci/validation_smooth'+str(option)
+                torch.load(filename[set_index]+'.pt')
 
-            if option == 0:
-                filename_test=filename_test+'_mask'+str(mask_size)
-                filename_train=filename_train+'_mask'+str(mask_size)
-                filename_validation=filename_validation+'_mask'+str(mask_size)
-            else:
-                filename_test=filename_test+'_w'+str(window)+'_or'+str(order_poly)
-                filename_train=filename_train+'_w'+str(window)+'_or'+str(order_poly)
-                filename_validation=filename_validation+'_w'+str(window)+'_or'+str(order_poly)
-
-            torch.save(test_input,filename_test+'.pt')
-            torch.save(train_input,filename_train+'.pt')
-            torch.save(validation_input,filename_validation+'.pt')
-
-
-            np.savetxt(filename_test+'.txt', test_input_smooth_mat)
-            np.savetxt(filename_train+'.txt', train_input_smooth_mat)
-            np.savetxt(filename_validation+'.txt', validation_input_smooth_mat)
-
-        else: # load only
-
-            # Load filtered datasets from file
-            filename_test = 'data_bci/train_smooth'+str(option)
-            filename_train = 'data_bci/train_smooth'+str(option)
-            filename_validation = 'data_bci/validation_smooth'+str(option)
-
-            if option == 0:
-                filename_test=filename_test+'_mask'+str(mask_size)
-                filename_train=filename_train+'_mask'+str(mask_size)
-                filename_validation=filename_validation+'_mask'+str(mask_size)
-            else:
-                filename_test=filename_test+'_w'+str(window)+'_or'+str(order_poly)
-                filename_train=filename_train+'_w'+str(window)+'_or'+str(order_poly)
-                filename_validation=filename_validation+'_w'+str(window)+'_or'+str(order_poly)
-
-            torch.load(filename_test+'.pt')
-            torch.load(filename_train+'.pt')
-            torch.load(filename_validation+'.pt')
-
-    # Normalize the data sets wrt the mean value of each channel of the
+    # Normalize the datasets wrt the mean and std of each channel of the
     # train dataset
     for i in range(0,channels):
         me_train = torch.mean(train_input[:,i,:])
         std_train = torch.std(train_input[:,i,:])
         train_input[:,i,:] = (train_input[:,i,:] - me_train)/std_train
         test_input[:,i,:] = (test_input[:,i,:] - me_train)/std_train
-        validation_input[:,i,:] = (validation_input[:,i,:] - me_train)/std_train
+
+        if cv_perc != 0.:
+            validation_input[:,i,:] = (validation_input[:,i,:] - me_train)/std_train
 
     return train_input, train_target, test_input, test_target, validation_input, validation_target

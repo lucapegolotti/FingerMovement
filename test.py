@@ -108,7 +108,7 @@ def train_model(model, train_input, train_target, validation_input, validation_t
         # number of errors on this set
         if validation_size is not 0:
             validation_error = compute_nb_errors(model,validation_input, validation_target)
-            print("Validation error: {0:.2f}%".format((validation_error/validation_size[0])*100))
+            print("Validation error: {0:.2f}%".format((validation_error/validation_size)*100))
             output_array[e,4] = (validation_error/validation_size)*100
 
 
@@ -156,7 +156,7 @@ data_long     = False
 filtered      = False
 filtered_load = False
 # No cross-validation dataset is used here. cv_perc = 0.2 was used while training the hyperparameters in test_optimizer.py
-cv_perc = 0.
+cv_perc = 0.1
 train_input, train_target,test_input, test_target, validation_input, validation_target \
 = loader.load_data(data_aug=data_aug,data_long=data_long,filtered=filtered,filtered_load=filtered_load,cv_perc=cv_perc)
 
