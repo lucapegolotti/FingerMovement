@@ -14,6 +14,21 @@ class LinearPredictor(nn.Module):
         x = self.fc1(x)
         return x
 
+class MC_DCNNNet(nn.Module):
+    def __init__(self):
+        super(MC_DCNNNet, self).__init__()
+        self.conv1 = nn.Conv1d(28, 30, kernel_size=6)
+        self.conv2 = nn.Conv1d(30, 60, kernel_size=6)
+        self.fc1 = nn.Linear(120, 40)
+        self.fc2 = nn.Linear(40, 2)
+
+    def forward(self, x):
+        x = F.relu(F.avg_pool1d(self.conv1(x), kernel_size=3))
+        x = F.relu(F.avg_pool1d(self.conv2(x), kernel_size=5))
+        x = F.relu(self.fc1(x.view(-1, 120)))
+        x = self.fc2(x)
+        return x
+
 class MC_DCNNNet2(nn.Module):
     def __init__(self):
         super(MC_DCNNNet2, self).__init__()
@@ -35,7 +50,7 @@ class MC_DCNNNet2(nn.Module):
         return x
 
 class ShallowConvNetPredictor(nn.Module):
-    def __init__(self, n_hidden = 20, kernel_size = 5, n_conv_1 = 40, n_conv_2=40):
+    def __init__(self, n_hidden = 125, kernel_size = 11, n_conv_1 = 15, n_conv_2=15):
         super(ShallowConvNetPredictor, self).__init__()
 
         self.conv1 = nn.Conv2d(1, n_conv_1 , kernel_size=(1,kernel_size))
