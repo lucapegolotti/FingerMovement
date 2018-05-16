@@ -13,8 +13,8 @@ import models as models
 import random
 
 
-data_aug = True
-filtered = True
+data_aug = False
+filtered = False
 
 torch.manual_seed(np.random.randint(0,100000))
 
@@ -58,20 +58,22 @@ def train_model(model, nepochs, train_input, train_target, validation_input, val
     for e in range(0, nepochs):
         mini_batch_size = initial_mini_batch_size
         sum_loss = 0
-        for b in range(0, train_input.size(0), mini_batch_size):
+        
 
-            mini_batch_size = min(mini_batch_size, train_input.size(0) - b)
-            output = model.forward(train_input.narrow(0, b, mini_batch_size))
-            train_target_narrowed = train_target.narrow(0, b, mini_batch_size).long()
+        shuffle_indexes_minibatch = torch.randperm(train_input.size(0))[0:mini_batch_size]
+        train_input_minibatch = train_input[shuffle_indexes_minibatch]
+        train_target_minibatch = train_target[shuffle_indexes_minibatch].long()
+        
+        output = model.forward(train_input_minibatch)
 
-            loss = criterion(output, train_target_narrowed)
+        loss = criterion(output, train_target_minibatch)
 
-            scheduler.step()
+        scheduler.step()
 
-            sum_loss = sum_loss + loss.data[0]
-            model.zero_grad()
-            loss.backward()
-            optimizer.step()
+        sum_loss = sum_loss + loss.data[0]
+        model.zero_grad()
+        loss.backward()
+        optimizer.step()
 
         train_error = compute_nb_errors(model,train_input, train_target)
         test_error = compute_nb_errors(model,test_input, test_target)
@@ -144,7 +146,7 @@ while 1:
     l2_parameter = 0.00012739304809129267
     scale = 0.9
 
-    nepochs = 400
+    nepochs = 1000
 
 
     print("Starting run number " + str(count))
