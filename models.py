@@ -55,9 +55,9 @@ class ShallowConvNetPredictor(nn.Module):
         return x
 
 
-class ShallowConvNetPredictorWithDropout(nn.Module):
+class M4(nn.Module): #ShallowConvNetPredictorWithDropout
    def __init__(self, n_hidden = 20, kernel_size = 5, n_conv_1 = 40, n_conv_2=40, p_dropout = 0.5):
-       super(ShallowConvNetPredictorWithDropout, self).__init__()
+       super(M4, self).__init__()
 
        self.conv1 = nn.Conv2d(1, n_conv_1 , kernel_size=(1,kernel_size))
        self.conv2 = nn.Conv2d(n_conv_1, n_conv_2, kernel_size=(28,1))
