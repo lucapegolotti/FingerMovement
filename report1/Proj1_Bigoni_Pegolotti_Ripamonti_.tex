@@ -103,7 +103,7 @@ Indeed, we can confirm that the average obtained from a subset of the training d
   \caption{Comparison of training and test datasets averages per channel over 316 and 100 samples, respectively.  
   Three channels (i.e., 3, 10 and 25) are randomly chosen, but the results generalise to all. 
   Each plot shows the mean of the samples with output 0 (i.e., classified as ``right'') and those with output 1 (i.e., classified as ``left''). 
-  The means of the signals sampled with 1000 Hz are plotted in red and blue, while those of the signals downsampled to 100 Hz ar plotted in black and magenta. 
+  The means of the signals sampled with 1000 Hz are plotted in red and blue, while those of the signals down-sampled to 100 Hz ar plotted in black and magenta. 
 For some channels (e.g., channel 3) the down-sampled averages present a lower variability than those for the signals sampled at 1000 Hz. 
   In all cases, the averages of the training set are distinctively different from those of the test set. 
   \label{fig_mean_1000hz_vs_downsampled}}
@@ -148,7 +148,7 @@ Figure \ref{fig_smoothig_savgol} shows ....TODO
 
  
  \section{Models we considered}\label{sec_allmodel}
- In this Section, we describe some of the models we tested on the EEG signals and summarize their performance in terms of errors on train and test datasets. Each of these models is tested against the standard down-sampled dataset and an \emph{augmented dataset}. The latter is obtained by preprocesing the dataset to reduce the generalisation error \cite{goodfellow2016deep}. In particular, we exploit the 1000 Hz dataset to extract not one, but 10  signals with frequency 100 Hz. 
+ In this Section, we describe some of the models we tested on the EEG signals and summarize their performance in terms of errors on a validation dataset. Each of these models is tested against the standard down-sampled dataset and an \emph{augmented dataset}. The latter is obtained by preprocesing the dataset to reduce the generalisation error \cite{goodfellow2016deep}. In particular, we exploit the 1000 Hz dataset to extract not one, but 10  signals with frequency 100 Hz. 
 In this way, our training dataset has the following dimensions: 3160 samples, 28 channels, 50 time-steps. 
 \textcolor{red}{We considered the possibility of extending the data-augmentation strategy to the test dataset to further increase the dimension of our training dataset by including some samples from the test dataset after shuffling. 
 However, we soon realised that this would imply solving an oversimplified problem being the 10 down-sampled signals all very alike. 
@@ -178,9 +178,9 @@ The convolutional layer in this model is such that that different masks are appl
 
 In this network, the first and the second convolutions operate in the dimension of the time samples and the channels respectively. We took inspiration from \cite{schirrmeister2017deep} for the design of this model.
 \end{itemize}
-The models are tested on the standard downsampled and augmented datasets to evaluate their performance. We use the stochastic gradient descent for the optimization step, with bash size equal to 100 or to 1000 when the train set is composed by 316 or 3160 samples respectively. The learning rates are $10^{-1}$ for the linear perceptron and $10^{-3}$ for the other three models.
+The models are tested on the standard down-sampled and augmented datasets to evaluate their performance. We use the stochastic gradient descent for the optimization step, with bash size equal to 100 or to 1000 when the train set is composed by 316 or 3160 samples respectively. The learning rates are $10^{-1}$ for the linear perceptron and $10^{-3}$ for the other three models.
 
-Table~\ref{tab_results} shows the performance of the four models in terms of error on the test dataset after 1000 iterations of the stochastic gradient descent. Surprisingly, the linear perceptron (M1) performs better than (M2) and (M3), leading to a smaller average error over all the runs and also to a smaller variance of the result. In the non-agumented dataset, however, the model that ensures in our experience a smaller minimum error and a smaller error on average is the shallow convolutional neural network.
+Table~\ref{tab_results} shows the performance of the four models in terms of error on a validation dataset (obtained by randomly choosing 10\% of the samples of the train dataset) after 1000 iterations of the stochastic gradient descent. Surprisingly, the linear perceptron (M1) performs better than (M2) and (M3), leading to a smaller average error over all the runs and also to a smaller variance of the result. In the non-agumented dataset, however, the model that ensures in our experience a smaller minimum error and a smaller error on average is the shallow convolutional neural network.
 
 Augmenting the dataset leads to a slightly smaller error for M1, but to a considerable loss of accuracy for the other three models. It is likely that, with a different choice of parameters (size of convolutional and pool nodes, kernels \ldots), the advantage of using larger datasets could be exploited also for M2, M3 and M4. 
 
@@ -210,7 +210,7 @@ Since the shallow convolutional network (M4) showed the most promising reults in
     Average & 27.4 & 29.0 & 30.9 & 27.0 & 24.4 & 32.6 & 37.1 & 32.9 \\
 \bottomrule
     \end{tabular}
-        \caption{Test errors for the linear perceptron (M1), the simple convolutional neural network (M2), the multichannel deep convolutional neural network combined with the linear perceptron (M3) and the shallow convolutional neural network (M4).}
+        \caption{Validation errors for the linear perceptron (M1), the simple convolutional neural network (M2), the multichannel deep convolutional neural network combined with the linear perceptron (M3) and the shallow convolutional neural network (M4).}
 \end{center}
 \label{tab_results}
 \end{table}
