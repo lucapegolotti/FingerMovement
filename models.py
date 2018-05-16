@@ -4,9 +4,9 @@ from torch.autograd import Variable
 from torch import nn
 from torch.nn import functional as F
 
-class LinearPredictor(nn.Module):
+class M1(nn.Module): # Linear Predictor
     def __init__(self):
-        super(LinearPredictor, self).__init__()
+        super(M1, self).__init__()
         self.fc1 = nn.Linear(1400, 2)
 
     def forward(self, x):
@@ -14,9 +14,9 @@ class LinearPredictor(nn.Module):
         x = self.fc1(x)
         return x
 
-class MC_DCNNNet(nn.Module):
+class M2(nn.Module): # MC_DCNNNet
     def __init__(self):
-        super(MC_DCNNNet, self).__init__()
+        super(M2, self).__init__()
         self.conv1 = nn.Conv1d(28, 30, kernel_size=6)
         self.conv2 = nn.Conv1d(30, 60, kernel_size=6)
         self.fc1 = nn.Linear(120, 40)
@@ -29,9 +29,9 @@ class MC_DCNNNet(nn.Module):
         x = self.fc2(x)
         return x
 
-class MC_DCNNNet2(nn.Module):
+class M3(nn.Module): # M3
     def __init__(self):
-        super(MC_DCNNNet2, self).__init__()
+        super(M3, self).__init__()
         self.conv1 = nn.Conv1d(28, 28, kernel_size=6, groups=28, bias=True)
         self.conv2 = nn.Conv1d(224, 112, kernel_size=4, groups=28, bias=True)
         self.fc1 = nn.Linear(252, 25)
@@ -49,9 +49,9 @@ class MC_DCNNNet2(nn.Module):
         x = self.fc3(x)
         return x
 
-class ShallowConvNetPredictor(nn.Module):
+class M4(nn.Module): #ShallowConvNetPredictor
     def __init__(self, n_hidden = 125, kernel_size = 11, n_conv_1 = 15, n_conv_2=15):
-        super(ShallowConvNetPredictor, self).__init__()
+        super(M4, self).__init__()
 
         self.conv1 = nn.Conv2d(1, n_conv_1 , kernel_size=(1,kernel_size))
         self.conv2 = nn.Conv2d(n_conv_1, n_conv_2, kernel_size=(28,1))
@@ -70,9 +70,9 @@ class ShallowConvNetPredictor(nn.Module):
         return x
 
 
-class M4(nn.Module): #ShallowConvNetPredictorWithDropout
+class M4_dropout(nn.Module): #ShallowConvNetPredictorWithDropout
    def __init__(self, n_hidden = 20, kernel_size = 5, n_conv_1 = 40, n_conv_2=40, p_dropout = 0.5):
-       super(M4, self).__init__()
+       super(M4_dropout, self).__init__()
 
        self.conv1 = nn.Conv2d(1, n_conv_1 , kernel_size=(1,kernel_size))
        self.conv2 = nn.Conv2d(n_conv_1, n_conv_2, kernel_size=(28,1))
@@ -95,41 +95,3 @@ class M4(nn.Module): #ShallowConvNetPredictorWithDropout
        x = self.fc2(x)
        return x
 
-class ShallowConvNetPredictor_1(nn.Module):
-    def __init__(self,n_conv_1 = 10, n_hidden = 100):
-        super(ShallowConvNetPredictor_1, self).__init__()
-
-        self.conv1 = nn.Conv2d(1, 40 , kernel_size=(1,5))
-        self.conv2 = nn.Conv2d(40, 40, kernel_size=(28,1))
-
-        self.fc1 = nn.Linear( 920, 2)
-
-    def forward(self, x):
-        x = x.unsqueeze(1)
-        x = F.relu(self.conv1(x))
-        x = F.relu(self.conv2(x))
-        x = F.max_pool2d(x, kernel_size = (1,2), stride = (1,2))
-        x = x.view(-1, x.size(1)*x.size(3))
-        x = self.fc1(x)
-        return x
-
-class ShallowConvNetPredictor_2(nn.Module):
-    def __init__(self,n_conv_1 = 10, n_hidden = 100):
-        super(ShallowConvNetPredictor_2, self).__init__()
-
-        self.conv1 = nn.Conv2d(1, 40 , kernel_size=(1,5))
-        self.conv2 = nn.Conv2d(40, 40, kernel_size=(28,1))
-
-        self.fc1 = nn.Linear( 920, 2)
-
-        self.dropout = nn.Dropout(p=0.5)
-
-    def forward(self, x):
-        x = x.unsqueeze(1)
-        x = F.relu(self.conv1(x))
-        x = F.relu(self.conv2(x))
-        x = F.max_pool2d(x, kernel_size = (1,2), stride = (1,2))
-        x = x.view(-1, x.size(1)*x.size(3))
-        x = self.dropout(x)
-        x = self.fc1(x)
-        return x
