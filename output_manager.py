@@ -9,10 +9,10 @@ import datetime
 
 
 class OutputManager():
-    def __init__(self,data_aug=False,filtered=False):
+    def __init__(self,data_aug=False,filtered=False,name_test=""):
         if not os.path.exists('output'):
             os.makedirs('output')
-        self.output_dir = "output/out" + datetime.datetime.now().strftime("%y_%m_%d_%H_%M_%S") +"_DA_"+str(data_aug)+"_filtered_"+str(filtered)
+        self.output_dir = "output/" + name_test + datetime.datetime.now().strftime("%y_%m_%d_%H_%M_%S") +"_DA_"+str(data_aug)+"_filtered_"+str(filtered)
         os.makedirs(self.output_dir)
 
     def write(self, parameters_sampler, outputs):
@@ -28,26 +28,3 @@ class OutputManager():
 
     def write_one(self, output, count):
         numpy.savetxt(self.output_dir + "/run" + str(count) + ".csv", output, delimiter=",", fmt="%.4f")
-
-        # swap with best if the result is better
-        # mustCopy = True
-        # for filename in os.listdir("output"):
-        #     if filename.startswith("best"):
-        #         f = open("output/" + filename, "r")
-        #         f.readline()
-        #         test_error = self.retrieveTestErrorFromString(f.readline())
-        #         curr_test_error = self.retrieveTestErrorFromString(test_error_string)
-        #
-        #         if (float(curr_test_error) > float(test_error)):
-        #             mustCopy = False
-        #
-        # if (mustCopy):
-        #     copyfile(nameFile, "output/best.txt")
-
-    # def retrieveTrainErrorFromString(self, train_error):
-    #     out = train_error[13:]
-    #     return out[:-2]
-    #
-    # def retrieveTestErrorFromString(self, train_error):
-    #     out = train_error[12:]
-    #     return out[:-2]
