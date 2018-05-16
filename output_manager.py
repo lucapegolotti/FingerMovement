@@ -30,7 +30,7 @@ class OutputManager():
         os.makedirs(self.output_dir)
 
     """
-    Write: write inside the output directory data regarding the parameters and
+    Write: write inside the output directory data the parameters and
     the convergence of the loss and errors
     ---------
     Input parameters:

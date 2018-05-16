@@ -49,9 +49,12 @@ def train_model(model, train_input, train_target, validation_input, validation_t
     # Effective mini-batch size for this training set
     mini_batch_size = int(train_size*batch_perc)
 
-    # Adam otpimizer to automatically optimize the value of the learning rate eta
+    # Adam otpimizer to improve weights and biases after each epoch
     optimizer = torch.optim.Adam(model.parameters(), lr = eta, weight_decay = l2_parameter)
-    # NICO TODO ---  # See http://pytorch.org/docs/master/optim.html#how-to-adjust-learning-rate
+
+    # We adjust the learning rate following a geometric progression with coefficient
+    # gamma every 30 epochs
+    # See http://pytorch.org/docs/master/optim.html#how-to-adjust-learning-rate
     # Section "How to adjust Learning Rate"
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=gamma, last_epoch=-1)
 
@@ -96,7 +99,8 @@ def train_model(model, train_input, train_target, validation_input, validation_t
         # print("Loss function = {0:.8f}".format(sum_loss))
         string_to_print = "Epoch: {0:d}".format(e) + \
                           " loss function: {0:.8f}".format(sum_loss) + \
-                          " train error: {0:.2f}%".format((train_error/train_size)*100)
+                          " train error: {0:.2f}%".format((train_error/train_size)*100) + \
+                          " test error: {0:.2f}%".format((test_error/test_size)*100)
 
         # Save results on output_array to be exported
         output_array[e,0] = e
@@ -155,7 +159,7 @@ while 1:
     best_test_error = 100
     index_best = 0
 
-    for n_runs in range(10):
+    for n_runs in range(1):
         # Definition of model and loss function choice
         model = models.M4_dropout(p.getParameter('size_hidden_layer'), \
                                   p.getParameter('size_kernel'), \

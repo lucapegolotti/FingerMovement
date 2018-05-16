@@ -174,7 +174,7 @@ class ParametersSampler():
     """
     def __init__(self):
         # dictionary with all the variables
-        self.parameters = {'batch_perc': UniformParameter("float", 1, 0.3, 0.3),
+        self.parameters = {'batch_perc': UniformParameter("float", 1, 0.1, 0.5),
                            'eta': UniformExponentialParameter("float", 10, -3, -3),
                            'size_conv1': UniformParameter("int",1,10,40),
                            'size_conv2': UniformParameter("int",1,10,40),
