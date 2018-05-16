@@ -12,7 +12,7 @@ from output_manager import OutputManager
 import numpy as np
 import random
 
-#torch.manual_seed(np.random.randint(0,100000))
+torch.manual_seed(np.random.randint(0,100000))
 
 # parameters = ParametersSampler()
 # parameters.showMe()
@@ -95,8 +95,9 @@ def train_model(model, train_input, train_target, validation_input, validation_t
         test_error = compute_nb_errors(model,test_input, test_target)
         # print("Epoch = {0:d}".format(e))
         # print("Loss function = {0:.8f}".format(sum_loss))
-        print("Train error: {0:.2f}%".format((train_error/train_size)*100))
-        print("Test error: {0:.2f}%".format((test_error/test_size)*100))
+        string_to_print = "Epoch: {0:d}".format(e) + \
+                          " loss function: {0:.8f}".format(sum_loss) + \
+                          " train error: {0:.2f}%".format((train_error/train_size)*100)
 
         # Save results on output_array to be exported
         output_array[e,0] = e
@@ -108,10 +109,10 @@ def train_model(model, train_input, train_target, validation_input, validation_t
         # number of errors on this set
         if validation_size is not 0:
             validation_error = compute_nb_errors(model,validation_input, validation_target)
-            print("Validation error: {0:.2f}%".format((validation_error/validation_size)*100))
+            string_to_print += " validation error: {0:.2f}%".format((validation_error/validation_size)*100)
             output_array[e,4] = (validation_error/validation_size)*100
-
-
+        print(string_to_print)
+    print("===============================================================================")
     return output_array
 
 """
@@ -156,10 +157,9 @@ data_long     = False
 filtered      = False
 filtered_load = False
 # No cross-validation dataset is used here. cv_perc = 0.2 was used while training the hyperparameters in test_optimizer.py
-cv_perc = 0.1
+cv_perc = 0.0
 train_input, train_target,test_input, test_target, validation_input, validation_target \
 = loader.load_data(data_aug=data_aug,data_long=data_long,filtered=filtered,filtered_load=filtered_load,cv_perc=cv_perc)
-
 
 # train_target = train_target.type(torch.FloatTensor)
 # test_target = test_target.type(torch.FloatTensor)
@@ -169,9 +169,7 @@ train_size = train_target.size(0)
 test_size = test_input.size(0)
 validation_size = validation_input.size(0)
 
-
-
-n_epochs = 1000
+n_epochs = 200
 
 for n_runs in range(N_times):
     # Definition of model and loss function choice
