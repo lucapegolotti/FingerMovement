@@ -151,7 +151,7 @@ while 1:
         test_input, test_target = Variable(test_input), Variable(test_target)
         validation_input, validation_target = Variable(validation_input), Variable(validation_target)
 
-        model, criterion = models.ShallowConvNetPredictorWithDropout(size_hidden_layer,size_kernel,size_conv1,size_conv2,dropout), nn.CrossEntropyLoss()
+        model, criterion = models.M4_dropout(size_hidden_layer,size_kernel,size_conv1,size_conv2,dropout), nn.CrossEntropyLoss()
         model.apply(init_weights)
 
         output = train_model(model, nepochs, train_input, train_target, validation_input, validation_target, test_input, test_target, eta, batch_size, l2_parameter, scale)
