@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.11.29)  15 MAY 2018 11:33
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.11.29)  16 MAY 2018 03:10
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -566,6 +566,51 @@ File: tikzlibrarybackgrounds.code.tex 2013/07/18 v3.0.0 (rcs-revision 1.3)
 s/tikzlibrarydecorations.pathreplacing.code.tex
 (/usr/local/texlive/2015/texmf-dist/tex/generic/pgf/libraries/decorations/pgfli
 brarydecorations.pathreplacing.code.tex))
+(/usr/local/texlive/2015/texmf-dist/tex/latex/booktabs/booktabs.sty
+Package: booktabs 2005/04/14 v1.61803 publication quality tables
+\heavyrulewidth=\dimen176
+\lightrulewidth=\dimen177
+\cmidrulewidth=\dimen178
+\belowrulesep=\dimen179
+\belowbottomsep=\dimen180
+\aboverulesep=\dimen181
+\abovetopsep=\dimen182
+\cmidrulesep=\dimen183
+\cmidrulekern=\dimen184
+\defaultaddspace=\dimen185
+\@cmidla=\count123
+\@cmidlb=\count124
+\@aboverulesep=\dimen186
+\@belowrulesep=\dimen187
+\@thisruleclass=\count125
+\@lastruleclass=\count126
+\@thisrulewidth=\dimen188
+)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/listings/listings.sty
+\lst@mode=\count127
+\lst@gtempboxa=\box62
+\lst@token=\toks39
+\lst@length=\count128
+\lst@currlwidth=\dimen189
+\lst@column=\count129
+\lst@pos=\count130
+\lst@lostspace=\dimen190
+\lst@width=\dimen191
+\lst@newlines=\count131
+\lst@lineno=\count132
+\lst@maxwidth=\dimen192
+
+(/usr/local/texlive/2015/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2014/09/06 1.5e (Carsten Heinz)
+\c@lstnumber=\count133
+\lst@skipnumbers=\count134
+\lst@framebox=\box63
+)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2014/09/06 1.5e listings configuration
+))
+Package: listings 2014/09/06 1.5e (Carsten Heinz)
+
 (/usr/local/texlive/2015/texmf-dist/tex/latex/adjustbox/adjustbox.sty
 Package: adjustbox 2012/05/21 v1.0 Adjusting TeX boxes (trim, clip, ...)
 
@@ -574,10 +619,10 @@ Package: xkeyval 2014/12/03 v2.7a package option processing (HA)
 
 (/usr/local/texlive/2015/texmf-dist/tex/generic/xkeyval/xkeyval.tex
 (/usr/local/texlive/2015/texmf-dist/tex/generic/xkeyval/xkvutils.tex
-\XKV@toks=\toks39
-\XKV@tempa@toks=\toks40
+\XKV@toks=\toks40
+\XKV@tempa@toks=\toks41
 )
-\XKV@depth=\count123
+\XKV@depth=\count135
 File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
 ))
 (/usr/local/texlive/2015/texmf-dist/tex/latex/adjustbox/adjcalc.sty
@@ -589,32 +634,32 @@ Package: trimclip 2012/05/16 v1.0 Trim and clip general TeX material
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/collectbox/collectbox.sty
 Package: collectbox 2012/05/17 v0.4b Collect macro arguments as boxes
-\collectedbox=\box62
+\collectedbox=\box64
 )
-\tc@llx=\dimen176
-\tc@lly=\dimen177
-\tc@urx=\dimen178
-\tc@ury=\dimen179
+\tc@llx=\dimen193
+\tc@lly=\dimen194
+\tc@urx=\dimen195
+\tc@ury=\dimen196
 Package trimclip Info: Using driver 'tc-pdftex.def'.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/adjustbox/tc-pdftex.def
 File: tc-pdftex.def 2012/05/13 v1.0 Clipping driver for pdftex
 ))
-\adjbox@Width=\dimen180
-\adjbox@Height=\dimen181
-\adjbox@Depth=\dimen182
-\adjbox@Totalheight=\dimen183
+\adjbox@Width=\dimen197
+\adjbox@Height=\dimen198
+\adjbox@Depth=\dimen199
+\adjbox@Totalheight=\dimen200
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/ifoddpage/ifoddpage.sty
 Package: ifoddpage 2011/09/13 v1.0 Conditionals for odd/even page detection
-\c@checkoddpage=\count124
+\c@checkoddpage=\count136
 )
 (/usr/local/texlive/2015/texmf-dist/tex/latex/varwidth/varwidth.sty
 Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
-\@vwid@box=\box63
-\sift@deathcycles=\count125
-\@vwid@loff=\dimen184
-\@vwid@roff=\dimen185
+\@vwid@box=\box65
+\sift@deathcycles=\count137
+\@vwid@loff=\dimen201
+\@vwid@roff=\dimen202
 ))
 (/usr/local/texlive/2015/texmf-dist/tex/latex/bigints/bigints.sty
 Package: bigints 2010/02/15 Writing big integrals
@@ -672,14 +717,14 @@ Package: auxhook 2011/03/04 v1.3 Hooks for auxiliary files (HO)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/oberdiek/kvoptions.sty
 Package: kvoptions 2011/06/30 v3.11 Key value format for package options (HO)
 )
-\@linkdim=\dimen186
-\Hy@linkcounter=\count126
-\Hy@pagecounter=\count127
+\@linkdim=\dimen203
+\Hy@linkcounter=\count138
+\Hy@pagecounter=\count139
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/hyperref/pd1enc.def
 File: pd1enc.def 2012/11/06 v6.83m Hyperref: PDFDocEncoding definition (HO)
 )
-\Hy@SavedSpaceFactor=\count128
+\Hy@SavedSpaceFactor=\count140
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/latexconfig/hyperref.cfg
 File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
@@ -691,17 +736,17 @@ Package hyperref Info: Plain pages OFF on input line 4458.
 Package hyperref Info: Backreferencing OFF on input line 4463.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4688.
-\c@Hy@tempcnt=\count129
+\c@Hy@tempcnt=\count141
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip11
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 LaTeX Info: Redefining \url on input line 5041.
-\XeTeXLinkMargin=\dimen187
-\Fld@menulength=\count130
-\Field@Width=\dimen188
-\Fld@charsize=\dimen189
+\XeTeXLinkMargin=\dimen204
+\Fld@menulength=\count142
+\Field@Width=\dimen205
+\Fld@charsize=\dimen206
 Package hyperref Info: Hyper figures OFF on input line 6295.
 Package hyperref Info: Link nesting OFF on input line 6300.
 Package hyperref Info: Hyper index ON on input line 6303.
@@ -711,17 +756,17 @@ Package hyperref Info: Link coloring with OCG OFF on input line 6320.
 Package hyperref Info: PDF/A mode OFF on input line 6325.
 LaTeX Info: Redefining \ref on input line 6365.
 LaTeX Info: Redefining \pageref on input line 6369.
-\Hy@abspage=\count131
-\c@Item=\count132
-\c@Hfootnote=\count133
+\Hy@abspage=\count143
+\c@Item=\count144
+\c@Hfootnote=\count145
 )
 
 Package hyperref Message: Driver (autodetected): hpdftex.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/hyperref/hpdftex.def
 File: hpdftex.def 2012/11/06 v6.83m Hyperref driver for pdfTeX
-\Fld@listcount=\count134
-\c@bookmark@seq@number=\count135
+\Fld@listcount=\count146
+\c@bookmark@seq@number=\count147
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty
 Package: rerunfilecheck 2011/04/15 v1.7 Rerun checks for auxiliary files (HO)
@@ -730,25 +775,25 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip49
 )
-Package hyperref Info: Option `colorlinks' set `false' on input line 38.
+Package hyperref Info: Option `colorlinks' set `false' on input line 45.
 
 (./Proj1_Bigoni_Pegolotti_Ripamonti_.aux)
 \openout1 = `Proj1_Bigoni_Pegolotti_Ripamonti_.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 60.
+LaTeX Font Info:    ... okay on input line 60.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 60.
+LaTeX Font Info:    ... okay on input line 60.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 60.
+LaTeX Font Info:    ... okay on input line 60.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 60.
+LaTeX Font Info:    ... okay on input line 60.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 60.
+LaTeX Font Info:    ... okay on input line 60.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 60.
+LaTeX Font Info:    ... okay on input line 60.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 60.
+LaTeX Font Info:    ... okay on input line 60.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -787,17 +832,17 @@ LaTeX Font Info:    ... okay on input line 53.
 ABD: EveryShipout initializing macros
 (/usr/local/texlive/2015/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count136
-\scratchdimen=\dimen190
-\scratchbox=\box64
-\nofMPsegments=\count137
-\nofMParguments=\count138
-\everyMPshowfont=\toks41
-\MPscratchCnt=\count139
-\MPscratchDim=\dimen191
-\MPnumerator=\count140
-\makeMPintoPDFobject=\count141
-\everyMPtoPDFconversion=\toks42
+\scratchcounter=\count148
+\scratchdimen=\dimen207
+\scratchbox=\box66
+\nofMPsegments=\count149
+\nofMParguments=\count150
+\everyMPshowfont=\toks42
+\MPscratchCnt=\count151
+\MPscratchDim=\dimen208
+\MPnumerator=\count152
+\makeMPintoPDFobject=\count153
+\everyMPtoPDFconversion=\toks43
 ) (/usr/local/texlive/2015/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
 
@@ -813,8 +858,9 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-\AtBeginShipoutBox=\box65
-Package hyperref Info: Link coloring OFF on input line 53.
+\c@lstlisting=\count154
+\AtBeginShipoutBox=\box67
+Package hyperref Info: Link coloring OFF on input line 60.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
@@ -822,36 +868,36 @@ Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
 (/usr/local/texlive/2015/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
 Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
-\c@section@level=\count142
+\c@section@level=\count155
 )
-LaTeX Info: Redefining \ref on input line 53.
-LaTeX Info: Redefining \pageref on input line 53.
-LaTeX Info: Redefining \nameref on input line 53.
+LaTeX Info: Redefining \ref on input line 60.
+LaTeX Info: Redefining \pageref on input line 60.
+LaTeX Info: Redefining \nameref on input line 60.
 
 (./Proj1_Bigoni_Pegolotti_Ripamonti_.out)
 (./Proj1_Bigoni_Pegolotti_Ripamonti_.out)
 \@outlinefile=\write4
 \openout4 = `Proj1_Bigoni_Pegolotti_Ripamonti_.out'.
 
-LaTeX Font Info:    Try loading font information for U+msa on input line 62.
+LaTeX Font Info:    Try loading font information for U+msa on input line 69.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 62.
+LaTeX Font Info:    Try loading font information for U+msb on input line 69.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 62.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 69.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <8> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 62.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 69.
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <6> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 62.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 69.
 Package epstopdf Info: Source file: <fig/fig4new_mean_downsampled_vs1000.eps>
 (epstopdf)                    date: 2018-05-15 11:26:45
 (epstopdf)                    size: 1216939 bytes
@@ -861,7 +907,7 @@ nverted-to.pdf>
 (epstopdf)                    size: 433586 bytes
 (epstopdf)             Command: <epstopdf --outfile=fig/fig4new_mean_downsample
 d_vs1000-eps-converted-to.pdf fig/fig4new_mean_downsampled_vs1000.eps>
-(epstopdf)             \includegraphics on input line 95.
+(epstopdf)             \includegraphics on input line 102.
 Package epstopdf Info: Output file is already uptodate.
 
 <fig/fig4new_mean_downsampled_vs1000-eps-converted-to.pdf, id=34, 1466.47874pt 
@@ -870,7 +916,7 @@ File: fig/fig4new_mean_downsampled_vs1000-eps-converted-to.pdf Graphic file (ty
 pe pdf)
  <use fig/fig4new_mean_downsampled_vs1000-eps-converted-to.pdf>
 Package pdftex.def Info: fig/fig4new_mean_downsampled_vs1000-eps-converted-to.p
-df used on input line 95.
+df used on input line 102.
 (pdftex.def)             Requested size: 443.57848pt x 207.06099pt.
 Package epstopdf Info: Source file: <fig/fig5new_fewsamples_mean_downsampled.ep
 s>
@@ -882,7 +928,7 @@ s-converted-to.pdf>
 (epstopdf)                    size: 37144 bytes
 (epstopdf)             Command: <epstopdf --outfile=fig/fig5new_fewsamples_mean
 _downsampled-eps-converted-to.pdf fig/fig5new_fewsamples_mean_downsampled.eps>
-(epstopdf)             \includegraphics on input line 110.
+(epstopdf)             \includegraphics on input line 117.
 Package epstopdf Info: Output file is already uptodate.
 
 <fig/fig5new_fewsamples_mean_downsampled-eps-converted-to.pdf, id=36, 1464.4712
@@ -892,7 +938,7 @@ File: fig/fig5new_fewsamples_mean_downsampled-eps-converted-to.pdf Graphic file
 
 <use fig/fig5new_fewsamples_mean_downsampled-eps-converted-to.pdf>
 Package pdftex.def Info: fig/fig5new_fewsamples_mean_downsampled-eps-converted-
-to.pdf used on input line 110.
+to.pdf used on input line 117.
 (pdftex.def)             Requested size: 443.57848pt x 207.34302pt.
 
 
@@ -906,48 +952,75 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 {/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 
 LaTeX Warning: Reference `fig_smoothig_savgol' on page 2 undefined on input lin
-e 138.
+e 137.
 
 [2 <./fig/fig4new_mean_downsampled_vs1000-eps-converted-to.pdf>]
-(./Proj1_Bigoni_Pegolotti_Ripamonti_.bbl [3 <./fig/fig5new_fewsamples_mean_down
-sampled-eps-converted-to.pdf>]) [4]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 219.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 219.
- (./Proj1_Bigoni_Pegolotti_Ripamonti_.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 219.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 219.
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 159.
+
+<fig/conv1.pdf, id=75, 3011.25pt x 770.88pt>
+File: fig/conv1.pdf Graphic file (type pdf)
+ <use fig/conv1.pdf>
+Package pdftex.def Info: fig/conv1.pdf used on input line 163.
+(pdftex.def)             Requested size: 443.57848pt x 40.52348pt.
+
+<fig/conv2.pdf, id=77, 3011.25pt x 770.88pt>
+File: fig/conv2.pdf Graphic file (type pdf)
+ <use fig/conv2.pdf>
+Package pdftex.def Info: fig/conv2.pdf used on input line 169.
+(pdftex.def)             Requested size: 443.57848pt x 103.69687pt.
+ [3 <./fig/conv1.pdf> <./fig/conv2.pdf> <./fig/fig5new_fewsamples_mean_downsamp
+led-eps-converted-to.pdf>] <fig/conv3.pdf, id=454, 3011.25pt x 770.88pt>
+File: fig/conv3.pdf Graphic file (type pdf)
+ <use fig/conv3.pdf>
+Package pdftex.def Info: fig/conv3.pdf used on input line 176.
+(pdftex.def)             Requested size: 443.57848pt x 68.01277pt.
+
+(./Proj1_Bigoni_Pegolotti_Ripamonti_.bbl [4 <./fig/conv3.pdf>]) [5]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 230.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 230.
+
+(./Proj1_Bigoni_Pegolotti_Ripamonti_.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 230.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 230.
 Package rerunfilecheck Info: File `Proj1_Bigoni_Pegolotti_Ripamonti_.out' has n
 ot changed.
-(rerunfilecheck)             Checksum: F930963D926F394BE179A26906C1555C;275.
+(rerunfilecheck)             Checksum: AE4B8C586F8584EDD5F1A7B8594900BE;256.
 
 
 LaTeX Warning: There were undefined references.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 219.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 230.
  ) 
 Here is how much of TeX's memory you used:
- 20092 strings out of 493089
- 408433 string characters out of 6134841
- 501755 words of memory out of 5000000
- 23151 multiletter control sequences out of 15000+600000
+ 21339 strings out of 493089
+ 426831 string characters out of 6134841
+ 522921 words of memory out of 5000000
+ 24379 multiletter control sequences out of 15000+600000
  11710 words of font info for 46 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  55i,11n,67p,884b,437s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
-</usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></
-usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></us
-r/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/
-local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/loc
-al/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local
-/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/t
-exlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/te
-xlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on Proj1_Bigoni_Pegolotti_Ripamonti_.pdf (4 pages, 603823 bytes)
-.
+</usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
+/usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></
+usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></us
+r/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/
+local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/lo
+cal/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/loca
+l/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/t
+exlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texl
+ive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texli
+ve/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive
+/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2
+015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/201
+5/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2015
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+Output written on Proj1_Bigoni_Pegolotti_Ripamonti_.pdf (5 pages, 1898920 bytes
+).
 PDF statistics:
- 142 PDF objects out of 1000 (max. 8388607)
- 118 compressed objects within 2 object streams
+ 663 PDF objects out of 1000 (max. 8388607)
+ 528 compressed objects within 6 object streams
  20 named destinations out of 1000 (max. 500000)
- 63 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 96 words of extra memory for PDF output out of 10000 (max. 10000000)
 

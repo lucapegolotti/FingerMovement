@@ -20,13 +20,6 @@ R.~T. Schirrmeister, J.~T. Springenberg, L.~D.~J. Fiederer, M.~Glasstetter,
   and decoding of movement-related information from the human eeg.
 \newblock {\em arXiv preprint arXiv:1703.05051}, 2017.
 
-\bibitem{wang2018data}
-F.~Wang, S.-h. Zhong, J.~Peng, J.~Jiang, and Y.~Liu.
-\newblock Data augmentation for eeg-based emotion recognition with deep
-  convolutional neural networks.
-\newblock In {\em International Conference on Multimedia Modeling}, pages
-  82--93. Springer, 2018.
-
 \bibitem{zheng2014time}
 Y.~Zheng, Q.~Liu, E.~Chen, Y.~Ge, and J.~L. Zhao.
 \newblock Time series classification using multi-channels deep convolutional

@@ -5,45 +5,45 @@ The style file: abbrv.bst
 Database file #1: mybib_dl.bib
 Warning--to sort, need author or key in bci_ii
 Warning--to sort, need author or key in savgol
-You've used 6 entries,
+You've used 5 entries,
             2118 wiz_defined-function locations,
-            526 strings with 4935 characters,
-and the built_in function-call counts, 2197 in all, are:
-= -- 205
-> -- 129
-< -- 3
-+ -- 52
-- -- 46
-* -- 151
-:= -- 348
-add.period$ -- 18
-call.type$ -- 6
-change.case$ -- 40
+            520 strings with 4693 characters,
+and the built_in function-call counts, 1677 in all, are:
+= -- 152
+> -- 101
+< -- 2
++ -- 41
+- -- 36
+* -- 115
+:= -- 269
+add.period$ -- 14
+call.type$ -- 5
+change.case$ -- 32
 chr.to.int$ -- 0
-cite$ -- 8
-duplicate$ -- 80
-empty$ -- 165
-format.name$ -- 46
-if$ -- 471
+cite$ -- 7
+duplicate$ -- 59
+empty$ -- 127
+format.name$ -- 36
+if$ -- 355
 int.to.chr$ -- 0
-int.to.str$ -- 6
-missing$ -- 5
-newline$ -- 31
-num.names$ -- 8
-pop$ -- 60
+int.to.str$ -- 5
+missing$ -- 4
+newline$ -- 26
+num.names$ -- 6
+pop$ -- 49
 preamble$ -- 1
-purify$ -- 35
+purify$ -- 28
 quote$ -- 0
-skip$ -- 63
+skip$ -- 48
 stack$ -- 0
-substring$ -- 86
-swap$ -- 25
-text.length$ -- 3
+substring$ -- 57
+swap$ -- 16
+text.length$ -- 2
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 22
+type$ -- 18
 warning$ -- 2
-while$ -- 14
-width$ -- 7
-write$ -- 61
+while$ -- 9
+width$ -- 6
+write$ -- 49
 (There were 2 warnings)

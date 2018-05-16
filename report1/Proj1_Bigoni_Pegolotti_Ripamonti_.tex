@@ -9,6 +9,13 @@
 \usetikzlibrary{shapes,arrows,positioning}
 \usetikzlibrary{mindmap,trees, backgrounds}
 \usetikzlibrary{decorations.pathreplacing}
+\usepackage{booktabs}
+\usepackage{listings}
+
+\lstset{
+  basicstyle=\ttfamily,
+  mathescape
+}
 
 
 \tikzset{block/.style={rectangle, draw, text width=10em, text centered, rounded corners,
@@ -101,7 +108,7 @@ For some channels (e.g., channel 3) the down-sampled averages present a lower va
   In all cases, the averages of the training set are distinctively different from those of the test set. 
   \label{fig_mean_1000hz_vs_downsampled}}
   \end{center}
-  \end{figure}t
+  \end{figure}
   %
  This behaviour can be justified if  samples have a high variance and Figure \ref{fig_fewsamples_vs_mean_downsampled},which shows the behaviour of three randomly chosen down-sampled samples for each class (i.e., left and right) for both the training and test dataset, confirmes it. 
  Immediately, we can see that both the training and test selected samples are all very noisy and distant from their corresponding mean.
@@ -120,14 +127,6 @@ For some channels (e.g., channel 3) the down-sampled averages present a lower va
   In order to reduce the discrepancies, we  normalise the training dataset using its mean and standard deviation for all channels. 
   The same values are used for the test dataset. 
   
-Driven by the poor accuracy of the results obtained with the methods proposed in the next section, we decide to include a \emph{data-augmentation} strategy, which can be seen as a way of preprocesing the dataset and reduce the generalisation error \cite{goodfellow2016deep}. 
-
-In particular, we exploit the 1000 Hz dataset to extract not one, but 10  signals with frequency 100 Hz. 
-In this way, our training dataset has the following dimensions: 3160 samples, 28 channels, 50 time-steps. 
-We considered the possibility of extending the data-augmentation strategy to the test dataset to further increase the dimension of our training dataset by including some samples from the test dataset after shuffling. 
-However, we soon realised that this would imply solving an oversimplified problem being the 10 down-sampled signals all very alike. 
-We therefore apply the data-augmentation strategy only to the training dataset. 
-
 
 Finally, driven by the results already published for this dataset, known as dataset VI in the BCI competition \cite{bci_ii}, and supported by other studies (see e.g. \cite{schirrmeister2017deep}), we propose a preprocessing strategy to reduce both the generalisation error and the size of the model needed to fit the training set.
 Indeed, by reducing the noise in the data, i.e., by increasing the signal-to-noise ration, we aim at reducing the amount of variation that the model has to take into account \cite{goodfellow2016deep} and thus . 
@@ -148,58 +147,70 @@ Figure \ref{fig_smoothig_savgol} shows ....TODO
  
 
  
- \section{Models we tried and why they don't work}\label{sec_allmodel}
+ \section{Models we considered}\label{sec_allmodel}
+ In this Section, we describe some of the models we tested on the EEG signals and summarize their performance in terms of errors on train and test datasets. Each of these models is tested against the standard down-sampled dataset and an \emph{augmented dataset}. The latter is obtained by preprocesing the dataset to reduce the generalisation error \cite{goodfellow2016deep}. In particular, we exploit the 1000 Hz dataset to extract not one, but 10  signals with frequency 100 Hz. 
+In this way, our training dataset has the following dimensions: 3160 samples, 28 channels, 50 time-steps. 
+\textcolor{red}{We considered the possibility of extending the data-augmentation strategy to the test dataset to further increase the dimension of our training dataset by including some samples from the test dataset after shuffling. 
+However, we soon realised that this would imply solving an oversimplified problem being the 10 down-sampled signals all very alike. 
+We therefore apply the data-augmentation strategy only to the training dataset.}
  
- - Linear Perceptron --  Error train vs. test when overfitting 
- 
- - Cross Validation (how many?)
- 
- - Each model is averaged over N times 
- 
+In the following, we provide a small description of each model we considered. The diagrams representing the graph structures show the dimensions of the input and output tensor of each module composing the networks except for the non-linear nodes, which do not modify the dimensionality of the inputs; $n$ is the number of samples of the input.
+\begin{itemize}
+\item Linear perceptron: the simplest model one could devise for a classification problem is the linear perceptron:  given an input tensor $x$, the output is computed by the model as $y_{ij} = \sum_{k}x_{ik} A_{jk} + b_{j}$, where $A$ is the matrix of weights, and $b$ is the bias vector.
+\item Simple convolutional linear network:
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth, clip=true,trim=100 300 295 230]{fig/conv1.pdf}
+\end{figure}
+
+\item Multichannel deep convolutional neural network + linear perceptron:
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth, clip=true,trim=30 40 70 50]{fig/conv2.pdf}
+\end{figure}
+
+The convolutional layer in this model is such that that different masks are applied to each channel; at the implementation level, this is achieved by setting the \verb|groups| parameter equal to 28 in the constructor of the model. Convolutions of this kind are employed to study multichannel uni-dimensional time-series also in \cite{zheng2014time}.
+\item Shallow convolutional neural network:
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth, clip=true,trim=80 200 520 200]{fig/conv3.pdf}
+\end{figure}
+
+In this network, the first and the second convolutions operate in the dimension of the time samples and the channels respectively. We took inspiration from \cite{schirrmeister2017deep} for the design of this model.
+\end{itemize}
+The models are tested on the standard downsampled and augmented datasets to evaluate their performance. We use the stochastic gradient descent for the optimization step, with bash size equal to 100 or to 1000 when the train set is composed by 316 or 3160 samples respectively. The learning rates are $10^{-1}$ for the linear perceptron and $10^{-3}$ for the other three models.
+
+Table~\ref{tab_results} shows the performance of the four models in terms of error on the test dataset after 1000 iterations of the stochastic gradient descent. Surprisingly, the linear perceptron performs relatively well.
+
  \begin{table}
  \begin{center}
-    \begin{tabular}{|  c | c | c  | c |c |}
-    \hline
-    Number of trials & Linear & ConvNet1 & ConvNet2 & Shallow ConvNet \\ \hline
-    1 & 29 & 34 & 37 & 29 \\
-    2 & 27 & 29 & 34 & 27\\
-    3 & 29 & 33 & 42 & 25\\
-    4 & 37 & 36 & 28 & 29 \\
-    5 & 31& 34 & 30 & 27 \\
-    6 & & & & 29 \\
-    7 & & & & 34\\
-    8 & & & & 30 \\
-    9 & & & & 36 \\
-    10 & & & & 29 \\
-        \hline
-    Best & 27  & 29 & 28 &27 \\
-    Average & & & &\\
-    Variance & & & &\\
-        \hline
+    \begin{tabular}{ l l l l l l l l l}
+\toprule
+     $ $ & \multicolumn{4}{c}{non-augmented dataset} & \multicolumn{4}{c}{augmented dataset} \\
+     \cmidrule(lr){2-5}
+     \cmidrule(lr){6-9}
+    Trial & M1 & M2 & M3 & M4 & M1 & M2 & M3 & M4  \\
+\midrule
+    1 & 27 & 34 & 32 & 32 & 23 & 37 & 36 & 35 \\
+    2 & 27 & 29 & 33 & 25 & 24 & 32 & 36 & 37 \\
+    3 & 29 & 28 & 30 & 24 & 24 & 33 & 35 & 34\\
+    4 & 30 & 23 & 29 & 29 & 24 & 34 & 37 & 34\\
+    5 & 26 & 28 & 30 & 33 & 26 & 30 & 34 & 33\\
+    6 & 27 & 29 & 32 & 26 & 26 & 33 & 40 & 33\\
+    7 & 26 & 29 & 33 & 29 & 25 & 31 & 34 & 32\\
+    8 & 27 & 27 & 29 & 21 & 24 & 32 & 44 & 29\\
+    9 & 29 & 31 & 30 & 29 & 24 & 32 & 39 & 37 \\
+    10 & 26 & 32 & 31 & 22 & 24 & 32 & 36 & 35\\
+    \midrule
+    Best & 26 & 23 & 28 & 21 & 23 & 28 & 34 & 29 \\
+    Average & 27.4 & 29.0 & 30.9 & 27.0 & 24.4 & 32.6 & 37.1 & 32.9 \\
+\bottomrule
     \end{tabular}
-        \caption{Test errors}
+        \caption{Test errors for the linear perceptron (M1), the simple convolutional neural network (M2), the multichannel deep convolutional neural network combined with the linear perceptron (M3) and the shallow convolutional neural network (M4).}
 \end{center}
+\label{tab_results}
 \end{table}
 
-
-
- - 2 Conv 1D + 3 linear 
- 
- - Conv only in the direction of the channels \cite{zheng2014time}
- 
- - Conv with "images", i.e. Conv 2D asymmetric (only in one direction) \cite{schirrmeister2017deep}
- 
- - All of them with Data Augmentation + white random noise \cite{wang2018data}
- 
- -  adaptive eta in gradient descent 
- 
- - L1 and L2 and other regularization techniques  \cite{goodfellow2016deep} 
- 
- - dropout 
- 
- -eta is reduced to 1e-3 when not converging
- 
- 
   \section{Model that works best}\label{sec_themodel}
  
  it doesnt overfit + graph
