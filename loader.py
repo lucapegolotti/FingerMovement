@@ -7,28 +7,28 @@ from scipy.signal import savgol_filter
 """
 Load data
 ---------
-Input paramters: 
-- data_aug: if True, creates an augmented dataset from the 1000 Hz dataset by 
-    down-sampling at frequency 100 Hz. In this case the number of samples in the 
+Input paramters:
+- data_aug: if True, creates an augmented dataset from the 1000 Hz dataset by
+    down-sampling at frequency 100 Hz. In this case the number of samples in the
     training set is multiplied by a factor 10, i.e. 3160 samples of size 28x50.
     The test dataset is never augmented
-- data_long: if True, uses the 1000 Hz dataset instead of the down-sampled one, 
+- data_long: if True, uses the 1000 Hz dataset instead of the down-sampled one,
     i.e., the training dataset will have size 316x28x500
 - filtered: if True, adds a smoothing to all datasets (training, test and validation).
     There are two options of filtering: a convolutional mask (option = 0 ) or the
-    Savitzky Golay filter (option = 1). The "option" choice is hard-coded. The 
+    Savitzky Golay filter (option = 1). The "option" choice is hard-coded. The
     filtering does not change the dimension of the dataset
-- filtered_load: if True, loads a pre-filtered dataset. 
+- filtered_load: if True, loads a pre-filtered dataset.
     This file has to exist in the data_bci folder
-- cv_perc: it corresponds to the percentage of training samples to be put in the 
-    validation set 
+- cv_perc: it corresponds to the percentage of training samples to be put in the
+    validation set
 
 Output parameters:
 - train_input
 - train_target
-- test_input 
-- test_target 
-- validation_input 
+- test_input
+- test_target
+- validation_input
 - validation_target
 """
 def load_data(data_aug=False, data_long=False, filtered=False, \
@@ -41,7 +41,7 @@ def load_data(data_aug=False, data_long=False, filtered=False, \
         print("Warning: Can not load the filtered version of the training input if filtered = False")
 
     # one_khz = True loads the 1000 Hz datasets for train. This is needed for both
-    # when augmenting the dataset or when using the high resolution one 
+    # when augmenting the dataset or when using the high resolution one
     if data_aug or data_long:
         one_khz = True
     else:
@@ -56,7 +56,7 @@ def load_data(data_aug=False, data_long=False, filtered=False, \
     test_size = test_input.size(0)
     validation_size = round(cv_perc * train_size)
 
-    # Create a random shuffling in the ordering of the rows (i.e. number of 
+    # Create a random shuffling in the ordering of the rows (i.e. number of
     # samples) of the train dataset
     indices = torch.randperm(train_size)
 
@@ -78,7 +78,7 @@ def load_data(data_aug=False, data_long=False, filtered=False, \
 
         # Remark: the validation set is not augmented. To create the validation set,
         # we down-sample just once the 1000Hz signals starting from the 7th timestep,
-        # because this is the first timestep in the provided down-sampled set 
+        # because this is the first timestep in the provided down-sampled set
         validation_input = train_input[indices_validation,:,6::10]
         validation_target = train_target[indices_validation]
 
@@ -91,7 +91,7 @@ def load_data(data_aug=False, data_long=False, filtered=False, \
             # Select the samples corresponding to validation indices
             validation_input = train_input[indices_validation,:,:]
             validation_target = train_target[indices_validation]
-        # Handle the case in which validation is not required    
+        # Handle the case in which validation is not required
         else:
             validation_input = torch.LongTensor([])
             validation_target = torch.LongTensor([])
@@ -99,24 +99,25 @@ def load_data(data_aug=False, data_long=False, filtered=False, \
         # Select the samples corresponding to train indices
         train_input = train_input[indices_train,:,:]
         train_target = train_target[indices_train]
-    
+
     channels = train_input.size(1)
     time_steps = train_input.size(2)
 
     if filtered:
 
+        # Select one of the available masks
         #option = 0  # mask
         option = 1 # savgol filter
 
-        if option == 0:
+        if option == 1:
                 mask_size = 5
                 mask = np.ones(mask_size)/mask_size
         else:
             window = 7
             order_poly = 3
 
-
-        if filtered_load ==0:
+        #TODO: puoi spiegare quello che fai qui? @Cate
+        if filtered_load == 0:
 
             test_input_smooth_mat = np.zeros((test_samples,channels*time_steps))
             train_input_smooth_mat = np.zeros((train_samples,channels*time_steps))
@@ -149,7 +150,6 @@ def load_data(data_aug=False, data_long=False, filtered=False, \
                         validation_input_smooth_mat[i,j*time_steps:(j+1)*time_steps] = savgol_filter(validation_input[i,j,:].numpy(),window,order_poly)
                     validation_input[i,j,:] = torch.tensor(validation_input_smooth_mat[i,j*time_steps:(j+1)*time_steps])
 
-
             # Save the text file of smoothed data
             filename_test = 'data_bci/test_smooth'+str(option)
             filename_train = 'data_bci/train_smooth'+str(option)
@@ -173,12 +173,9 @@ def load_data(data_aug=False, data_long=False, filtered=False, \
             np.savetxt(filename_train+'.txt', train_input_smooth_mat)
             np.savetxt(filename_validation+'.txt', validation_input_smooth_mat)
 
-
-
-
-
         else: # load only
 
+            # Load filtered datasets from file
             filename_test = 'data_bci/train_smooth'+str(option)
             filename_train = 'data_bci/train_smooth'+str(option)
             filename_validation = 'data_bci/validation_smooth'+str(option)
@@ -192,30 +189,17 @@ def load_data(data_aug=False, data_long=False, filtered=False, \
                 filename_train=filename_train+'_w'+str(window)+'_or'+str(order_poly)
                 filename_validation=filename_validation+'_w'+str(window)+'_or'+str(order_poly)
 
-
             torch.load(filename_test+'.pt')
             torch.load(filename_train+'.pt')
             torch.load(filename_validation+'.pt')
 
-
-    # NORMALIZE
-    # ---------
+    # Normalize the data sets wrt the mean value of each channel of the
+    # train dataset
     for i in range(0,channels):
-        me_train = torch.mean(train_input[:,i,:]) # 28 medie
+        me_train = torch.mean(train_input[:,i,:])
         std_train = torch.std(train_input[:,i,:])
-        train_input[:,i,:] = (train_input[:,i,:] - me_train)/std_train;
-        test_input[:,i,:] = (test_input[:,i,:] - me_train)/std_train;
-
-    # for i in range(0,channels):
-    #     for j in range(0,train_samples):
-    #         min_train = torch.min(train_input[j,i,:])
-    #         max_train = torch.max(train_input[j,i,:])
-    #         train_input[j,i,:] = (train_input[j,i,:] - min_train) / (max_train - min_train)
-    #
-    #     for j in range(0,test_samples):
-    #         min_test = torch.min(test_input[j,i,:])
-    #         max_test = torch.max(test_input[j,i,:])
-    #         test_input[j,i,:] = (test_input[j,i,:] - min_test) / (max_test - min_test)
-
+        train_input[:,i,:] = (train_input[:,i,:] - me_train)/std_train
+        test_input[:,i,:] = (test_input[:,i,:] - me_train)/std_train
+        validation_input[:,i,:] = (validation_input[:,i,:] - me_train)/std_train
 
     return train_input, train_target, test_input, test_target, validation_input, validation_target
