@@ -1,0 +1,48 @@
+List of parameters:
+===================
+Parameter = batch_perc
+Type = float
+Size = 1
+Value = 0.19052629062090362
+
+Parameter = eta
+Type = float
+Size = 1
+Value = 0.001
+
+Parameter = size_conv1
+Type = int
+Size = 1
+Value = 18
+
+Parameter = size_conv2
+Type = int
+Size = 1
+Value = 12
+
+Parameter = size_kernel
+Type = int
+Size = 1
+Value = 11
+
+Parameter = size_hidden_layer
+Type = int
+Size = 1
+Value = 122
+
+Parameter = scale
+Type = float
+Size = 1
+Value = 0.9
+
+Parameter = dropout
+Type = float
+Size = 1
+Value = 0.35
+
+Parameter = l2_parameter
+Type = float
+Size = 1
+Value = 0.001
+
+
