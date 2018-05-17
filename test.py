@@ -21,7 +21,7 @@ torch.manual_seed(np.random.randint(0,100000))
 ########
 
 load_best_initial_condition = 1
-name_best = "best_model_initial.pt"
+name_best = "best_model/best_model_initial.pt"
 # many_run = 0 means that this code with fixed choice of parameters will be run
 # once. If instead many_run = 1 the code will be run N_times = 100 times and the
 # outputs are saved in a subfolder of folder "output_many_run"
@@ -33,15 +33,26 @@ else:
 
 # parameters correpond to best choice of parameters for method M4 as described in
 # the report. The description of method M4 can be found in models.py
-parameters = {'batch_perc'        : 0.42623900430271944,
-              'eta'               : 0.0002592079785007456,
-              'dropout'           : 0.47626453296997534,
-              'size_conv1'        : 30,
-              'size_conv2'        : 17,
-              'size_kernel'       : 9,
-              'size_hidden_layer' : 138,
-              'l2_parameter'      : 0.00033274567029747243,
-              'gamma'             : 0.8450533716557838
+# parameters = {'batch_perc'        : 0.42623900430271944,
+#               'eta'               : 0.0002592079785007456,
+#               'dropout'           : 0.47626453296997534,
+#               'size_conv1'        : 30,
+#               'size_conv2'        : 17,
+#               'size_kernel'       : 9,
+#               'size_hidden_layer' : 138,
+#               'l2_parameter'      : 0.00033274567029747243,
+#               'gamma'             : 0.8450533716557838
+# }
+
+parameters = {'batch_perc'        : 0.19052629062090362,
+              'eta'               : 0.001,
+              'dropout'           : 0.35,
+              'size_conv1'        : 18,
+              'size_conv2'        : 12,
+              'size_kernel'       : 11,
+              'size_hidden_layer' : 122,
+              'l2_parameter'      : 0.001,
+              'gamma'             : 0.9
 }
 
 if many_run:
