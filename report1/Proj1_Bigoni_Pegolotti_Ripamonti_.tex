@@ -74,7 +74,6 @@
 
 % \small{\textsuperscript{a}EPFL-SB-MATH-MCSS, \textsuperscript{b}EPFL-SB-MATH-DIV}
 
-
 \section{Introduction}
  % Quick intro on the problem
  The goal of this project is to design and train a Deep Neural Network to analyse EEG data. 
@@ -109,8 +108,8 @@ Even if we understand that the average is not a sufficient meaningful quantity t
   \caption{Comparison of training and test datasets averages per channel over 316 and 100 samples, respectively.  
   Three channels (i.e., 3, 10 and 25) are randomly chosen, but the results generalise to all. 
   Each plot shows the mean of the samples with output 0 (i.e., classified as ``right'') and those with output 1 (i.e., classified as ``left''). 
-  The means of the signals sampled with 1000 Hz are plotted in red and blue, while those of the signals down-sampled to 100 Hz ar plotted in black and magenta. 
-For some channels (e.g., channel 3) the down-sampled averages present a lower variability than those for the signals sampled at 1000 Hz. 
+  The means of the signals sampled with 1000 Hz are plotted in red and blue and those down-sampled to 100 Hz ar plotted in black and magenta. 
+For some channels (e.g., channel 3) the down-sampled averages present a lower variability than those sampled at higher resolution. 
   In all cases, the averages of the training set are distinctively different from those of the test set. 
   \label{fig_mean_1000hz_vs_downsampled}}
   \end{center}
@@ -119,7 +118,7 @@ For some channels (e.g., channel 3) the down-sampled averages present a lower va
  To support this idea, Figure \ref{fig_fewsamples_vs_mean_downsampled}  shows the behaviour of three randomly chosen samples with frequency 100 Hz for each class (i.e., left and right) for both the training and test dataset. 
  Immediately, we can see that both the training and test selected samples are all very noisy and distant from their corresponding average.
  As expected, we can not recognize a pattern for the signals corresponding to the left or right classification. 
- %Fig1
+ %Fig2
   \begin{figure}[h]
  \begin{center}
   \includegraphics[width=1\textwidth]{fig/fig5new_fewsamples_mean_downsampled} 
@@ -130,7 +129,7 @@ For some channels (e.g., channel 3) the down-sampled averages present a lower va
   \label{fig_fewsamples_vs_mean_downsampled}}
   \end{center}
   \end{figure}
-  % End of fig1
+  % End of fig2
 
 Finally, driven by the results already published for this dataset \cite{bci_ii} and supported by other studies (see e.g. \cite{schirrmeister2017deep}), we propose a pre-processing strategy to reduce both the generalisation error and the size of the model needed to fit the training set.
 Indeed, by reducing the noise in the data, i.e., by increasing the signal-to-noise ration, we aim at reducing the amount of variation that the model has to take into account and thus hope that a simpler model can better classify our data  \cite{goodfellow2016deep} . 
@@ -138,16 +137,8 @@ A \emph{filtering preprocessing} technique is therefore applied to our  final mo
 In particular, we use the 1D Savitzky-Golay filter \cite{savgol} to smooth the data without greatly distorting the signal. 
 By a convolution, the filter fits successive subsets of adjacent data points in a low-degree polynomial using the linear least squares method. 
 In our tests, we use subsets of 7 points to be fitted in a polynomial of order 3. 
-%Figure \ref{fig_smoothig_savgol} shows ....TODO
-% \begin{figure}[h]
-% \begin{center}
-%  \includegraphics[width=1\textwidth]{fig/fig6_smoothing} 
-%  \caption{lala
-%  \label{fig_smoothig_savgol}}
-%  \end{center}
-%  \end{figure}
 
- % TOADD ???  - mixed train+test mean? // train only 100 vs train 316 mean? 
+
  
 
  % All models 
@@ -194,14 +185,17 @@ We took inspiration from \cite{schirrmeister2017deep} for the design of this mod
 
 % Comments on the architecture and optimisation step 
 We use the stochastic ADAM for the optimisation step, with bash size equal to 100 or to 1000  for the standard and augmented training datasets, respectively. 
-The learning rate $\varepsilon$ is equal to  $10^{-1}$ for the linear perceptron and $10^{-3}$ for the other three models.
+The learning rate $\varepsilon$ is equal to  $10^{-1}$ for the linear perceptron and $10^{-3}$ for the other three models. 
+This choice is made  for convergence purposes. 
 The models are optimised according to the cross entropy loss function. 
 
 % Results
-Table~\ref{tab_results} shows the performance of the four models in terms of percentage error on a cross-validation dataset (obtained by randomly choosing 10\% of the samples of the train dataset) after 1000 epochs of the stochastic gradient descent. 
-Surprisingly, the linear perceptron (M1) performs better than (M2) and (M3), leading to a smaller average error over all the runs and also to a smaller variance of the result. 
+Table~\ref{tab_results} shows the performance of the four models in terms of percentage error on a cross-validation dataset (obtained by randomly choosing 10\% of the samples of the train dataset) after 1000 epochs of the stochastic gradient descent (SGD). 
+Each model is run 10 times and the variability in the results is due to the random initialisation of parameters and the SGD.
+Surprisingly, the linear perceptron (M1) performs better than (M2) and (M3), leading to a smaller average error and variance. 
 In the non-augmented dataset, however, the model that ensures a smaller minimum error and a smaller error on average is the shallow convolutional neural network (M4).
 
+% Table1
  \begin{table}
  \begin{center}
     \begin{tabular}{ l l l l l l l l l}
@@ -226,9 +220,10 @@ In the non-augmented dataset, however, the model that ensures a smaller minimum 
     Average & 27.4 & 29.0 & 30.9 & 27.0 & 24.4 & 32.6 & 37.1 & 32.9 \\
 \bottomrule
     \end{tabular}
-        \caption{Validation errors for the linear perceptron (M1), the simple convolutional neural network (M2), the multichannel deep convolutional neural network combined with the linear perceptron (M3) and the shallow convolutional neural network (M4).\label{tab_results}}
+        \caption{Validation percentage errors for the linear perceptron (M1), the simple convolutional linear network (M2), the multichannel deep CNN combined with the linear perceptron (M3) and the shallow CNN (M4) using the down-sampeld set or the augmented one.\label{tab_results}}
 \end{center}
 \end{table}
+% end table1
 
 % Augmented dataset is not so good
 Augmenting the dataset leads to a slightly smaller error for M1, but to a considerable loss of accuracy for the other three models. 
@@ -261,20 +256,19 @@ Finally, regarding regularisation, both the dropout probability and the $L_2$ pe
  
 This set of 9  hyper-parameters is used for optimisation in three different scenarios: 
 \begin{itemize}
-\item the \emph{regular dataset}, i.e. the down-sampled one with $50$ time steps per channel; 
-\item the \emph{augmented dataset}, as described in the previous section;% obtained starting from the regular dataset and enriching it with  repeated down-samplings of the larger dataset.
-\item the \emph{smoothed dataset} obtained from the regular set by applying the Savitzky-Golay filter to each  signal.
+\item the \emph{regular dataset}, i.e. the down-sampled one with $50$ time-steps per channel; 
+\item the \emph{augmented dataset} described in the previous section;% obtained starting from the regular dataset and enriching it with  repeated down-samplings of the larger dataset.
+\item the \emph{smoothed dataset} obtained  by applying the smoothing filter described at the end of Section~\ref{sec_visual}.
 \end{itemize}
 
-Di COME SONO ANDATI A FINIRE CIASCUNO DI QUESTI
-E POI CONCLUSIONI 
+[[per me non è chiaro che facciamo sampling uniforme da questi intervalli]]
 
-
+% table 2
 \begin{table}
   \begin{center}
     \begin{tabular}{ c | l | c }
       \toprule
-        \multicolumn{1}{|c|}{\underline{Group}} & \multicolumn{1}{|c|}{\underline{Type}} & \multicolumn{1}{|c|}{\underline{Interval}}  \\
+        \multicolumn{1}{c|}{{Group}} & \multicolumn{1}{|c|}{{Type}} & \multicolumn{1}{|c}{{Interval}}  \\
        \midrule
        & &  \\
        \multirow{4}{*}{\makecell{Architecture \\ parameters}} & Output channels: First convolution & $[10,80]$ \\
@@ -291,12 +285,24 @@ E POI CONCLUSIONI
         & &  \\
 \bottomrule
     \end{tabular}
-        \caption{Parameters intervals adopted in the hyperparameter optimization step. The reported intervals have been obtained as subinterval of initial guesses, cropped after we noticed that for some values convergence was not obtained. \label{tab_hyperparam_optim}}
+        \caption{Intervals  for each parameter adopted in the hyper-parameter optimisation step. The reported intervals are the result of an  initial educated guess, which has then be refined when we noticed that for some too large or too small values convergence was not obtained. \label{tab_hyperparam_optim}}
 \end{center}
-
 \end{table}
+% end table two
   
+  
+  % Conclusion
  \section{Conclusion}\label{sec_conclusion}
+ We proposed a CNN model to classify  EEG data to predict a binary choice.
+ We initially introduced four increasingly complex models and, out of these, the one which provided the smallest error on the cross-validation set is selected for further inspection. 
+ We run hyper-parameter optimisation to find the best architecture on this model and the best choice of parameters was then tested on the test set. 
+ Out of 100 runs, our best result on test set has an accuracy of 78\% and on average we obtain an accuracy of 70\%. 
+ Therefore, the random initialisation of parameters and SGD plays a big role in the final output. 
+ 
+ Additional regularisation approaches we wished  we had time to test are  the early stopping, the noisy labels and the add of random noise to the training set. 
+ To conclude, we believe that the proposed framework of subsequent choices we made could have performed better if the initial dataset was less noisy or more numerous. 
+ As reported \cite{bci_qualcosa}, classifying EEG signals is still an ongoing research field and 
+ 
  
  
  % References
