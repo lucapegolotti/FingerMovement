@@ -3,11 +3,12 @@ Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: Proj1_Bigoni_Pegolotti_Ripamonti_.aux
 The style file: abbrv.bst
 Database file #1: mybib_dl.bib
+Warning--I didn't find a database entry for "bci_qualcosa"
 Warning--to sort, need author or key in bci_ii
 Warning--to sort, need author or key in savgol
 You've used 5 entries,
             2118 wiz_defined-function locations,
-            520 strings with 4693 characters,
+            521 strings with 4705 characters,
 and the built_in function-call counts, 1677 in all, are:
 = -- 152
 > -- 101
@@ -46,4 +47,4 @@ warning$ -- 2
 while$ -- 9
 width$ -- 6
 write$ -- 49
-(There were 2 warnings)
+(There were 3 warnings)

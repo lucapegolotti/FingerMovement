@@ -158,7 +158,7 @@ For all models,    in order to reduce the discrepancies, we  normalise the train
 \item \textbf{Linear perceptron (M1).} 
 The simplest model one could devise for a classification problem is the linear perceptron:  given an input tensor $x$, the output is computed by the model as $y_{ij} = \sum_{k}x_{ik} A_{jk} + b_{j}$, where $A$ is the matrix of weights, and $b$ is the bias vector.
 
-\item \textbf{Simple convolutional linear network (M2).} TODO
+\item \textbf{Simple convolutional linear network (M2).} We consider two convolutional layers --  combined with average pooling and ReLU non-linearities -- followed by two additional linear layers. The kernels are translated in the direction of the timesteps.
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth, clip=true,trim=100 300 295 230]{fig/conv1.pdf}
