@@ -20,8 +20,11 @@ torch.manual_seed(np.random.randint(0,100000))
 # Main #
 ########
 
-load_best_initial_condition = 1
-name_best = "best_model/best_model.pt"
+# if load_best_initial_condition = 1, we take the initial condition of the best
+# model we obtain to start the train. Otherwise, we choose random weights for the
+# network
+load_best_initial_condition = 0
+name_best = "best_model/best_model_initial.pt"
 # many_run = 0 means that this code with fixed choice of parameters will be run
 # once. If instead many_run = 1 the code will be run N_times = 100 times and the
 # outputs are saved in a subfolder of folder "output_many_run"
