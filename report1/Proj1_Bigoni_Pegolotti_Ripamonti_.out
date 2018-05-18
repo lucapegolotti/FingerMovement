@@ -1,5 +1,7 @@
 \BOOKMARK [1][-]{section.1}{Introduction}{}% 1
 \BOOKMARK [1][-]{section.2}{Data Visualisation}{}% 2
 \BOOKMARK [1][-]{section.3}{Considered models}{}% 3
-\BOOKMARK [1][-]{section.4}{Hyper-parameter optimisation}{}% 4
-\BOOKMARK [1][-]{section.5}{Conclusion}{}% 5
+\BOOKMARK [1][-]{section.4}{Further investigation of CNN model}{}% 4
+\BOOKMARK [2][-]{subsection.4.1}{Overfitting}{section.4}% 5
+\BOOKMARK [2][-]{subsection.4.2}{Hyper-parameter optimisation}{section.4}% 6
+\BOOKMARK [1][-]{section.5}{Conclusion}{}% 7

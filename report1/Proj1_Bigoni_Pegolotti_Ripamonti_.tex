@@ -14,6 +14,8 @@
 \usepackage{multirow}
 \usepackage{makecell}
 
+\usepackage{float}
+
 
 \lstset{
   basicstyle=\ttfamily,
@@ -77,18 +79,18 @@
 \section{Introduction}
  % Quick intro on the problem
  The goal of this project is to design and train a Deep Neural Network to analyse EEG data. 
- In particular, we perform a two-class classification of EEG time signals collected from one patient to predict the direction of her upcoming finger movements (left vs. right). 
+ In particular, we perform a two-class classification of EEG time signals collected from one patient to predict the direction of her upcoming finger movements (left vs.\ right). 
  The  dataset,  known as dataset VI  of the ``BCI Competition II'' \cite{bci_ii}, is composed of 416 recordings  sampled at  a  frequency of 1000 Hz for 28 channels (i.e., electrodes placed at different locations on the skull).
 The dataset is split in training and test sets of 316 and 100 samples, respectively. 
 
 % Organisation of the report
-This report is organised as follows: we will briefly present and visualise the datasets in Section \ref{sec_visual}, where we introduce the suggested down-sampling strategy and a pre-processing algorithm to reduce  noise in the signals. 
-Then, in Section \ref{sec_allmodel}, we  present four  different models and the corresponding results obtained on the cross-validation set.
-Here we also include a data-augmentation strategy to increase the number of samples and hopefully reduce the generalisation error. 
-Of these, the one that performs best is selected for further tests in Section \ref{sec_themodel}. 
-In particular, we present a  an optimisation setup to select the most performing hyper-parameters.
-The set of parameters that gives the smallest error on the cross-validation set is selected and finally tested on the test set.  
-Final conclusions and discussions are provided in Section \ref{sec_conclusion}. 
+%This report is organised as follows: we will briefly present and visualise the datasets in Section \ref{sec_visual}, where we introduce the suggested down-sampling strategy and a pre-processing algorithm to reduce  noise in the signals. 
+%Then, in Section \ref{sec_allmodel}, we  present four  different models and the corresponding results obtained on the cross-validation set.
+%Here we also include a data-augmentation strategy to increase the number of samples and hopefully reduce the generalisation error. 
+%Of these, the one that performs best is selected for further tests in Section \ref{sec_themodel}. 
+%In particular, we present an optimisation setup to select the most performing hyper-parameters.
+%The set of parameters that gives the smallest error on the cross-validation set is selected and finally tested on the test set.  
+%Final conclusions and discussions are provided in Section \ref{sec_conclusion}. 
 
  % Visualisation remarks -
  \section{Data Visualisation}\label{sec_visual}
@@ -108,7 +110,6 @@ Even if we understand that the average is not a sufficient meaningful quantity t
   \caption{Comparison of training and test datasets averages per channel over 316 and 100 samples, respectively.  
   Three channels (i.e., 3, 10 and 25) are randomly chosen, but the results generalise to all. 
   Each plot shows the mean of the samples with output 0 (i.e., classified as ``right'') and those with output 1 (i.e., classified as ``left''). 
-  The means of the signals sampled with 1000 Hz are plotted in red and blue and those down-sampled to 100 Hz ar plotted in black and magenta. 
 For some channels (e.g., channel 3) the down-sampled averages present a lower variability than those sampled at higher resolution. 
   In all cases, the averages of the training set are distinctively different from those of the test set. 
   \label{fig_mean_1000hz_vs_downsampled}}
@@ -124,8 +125,6 @@ For some channels (e.g., channel 3) the down-sampled averages present a lower va
   \includegraphics[width=1\textwidth]{fig/fig5new_fewsamples_mean_downsampled} 
   \caption{Plot of few randomly chosen samples from training and test datasets for channels 3, 10 and 25.
   Samples classified as 0 (i.e., ``right'') are plotted in red, while   samples classified as 1 (i.e., ``left'') are plotted in blue.
-  The down-sampled averages corresponding to the training and test dataset are also shown in black.
-   These plots confirm that the data have a high variability. 
   \label{fig_fewsamples_vs_mean_downsampled}}
   \end{center}
   \end{figure}
@@ -152,7 +151,7 @@ However, we believe that  issues cause by this mis-alignment can be neglected.
 In this way, the training dataset has the following dimensions: 3160 samples, 28 channels and 50 time-steps. 
 % Remark: only on training - you cant augment the test and take some of those in the training, it'd be too simple
 
-In the following, we provide a small description of each model we considered. 
+In the following, we provide a small description of each model we considered.
 The diagrams representing the graph structures show the dimensions of the input and output tensors of each module composing the networks except for the non-linear nodes because they do not modify the dimensionality of the inputs.
 In all diagrams, $n$ is the number of input samples.
 For all models,    in order to reduce the discrepancies, we  normalise the training dataset using its mean and standard deviation for all channels. 
@@ -165,23 +164,23 @@ The simplest model one could devise for a classification problem is the linear p
 \item \textbf{Simple convolutional linear network (M2).} 
 We consider two convolutional layers, both  combined with average pooling and ReLU non-linearities and then followed by two additional linear layers. 
 The kernels are moved in the direction of the time-steps.
-\begin{figure}[h!]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth, clip=true,trim=100 300 295 230]{fig/conv1.pdf}
 \end{figure}
 
 \item \textbf{Multichannel deep convolutional neural network + linear perceptron (M3).}
 The convolutional layer in this model is such that  different masks are applied to each channel; at the implementation level, this is achieved by setting the \verb|groups| parameter equal to 28 in the constructor of the model. Convolutions of this kind are employed to study  uni-dimensional time-series multichannel also in \cite{zheng2014time}.
-\begin{figure}[h!]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth, clip=true,trim=30 40 70 50]{fig/conv2.pdf}
 \end{figure}
 
 \item \textbf{Shallow convolutional neural network (M4).}
-In this network, the first and the second convolutions operate in the dimension of the time samples and the channels, respectively. 
+In this network, the first and the second convolutions operate in the dimension of the time-steps and the channels, respectively. 
 We took inspiration from \cite{schirrmeister2017deep} for the design of this model.
 \end{itemize}
-\begin{figure}[h!]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth, clip=true,trim=80 200 520 200]{fig/conv3.pdf}
 \end{figure}
@@ -261,7 +260,7 @@ After identifying  the most promising model in Section \ref{sec_allmodel} and ch
  On the other hand, if we notice that for parameters close to one either the lower- or the upper-bounds the accuracy is high, we modify the bounds to include smaller or higher values, respectively. 
 
 We consider three groups of  parameters (architecture, training and regularisation) and their intervals, chosen after few refinement steps, are listed in Table~\ref{tab_hyperparam_optim}.  
- Architecture parameters are related to capacity of the network and control the size of weights and biases of hidden layers (see Figure (put reference)). 
+ Architecture parameters are related to capacity of the network and control the size of weights and biases of hidden layers.
  As mentioned in the previous section, the ADAM algorithm is adopted to optimise the network with a stochastic mini-batch procedure to update the weights and biases. 
 Moreover,  instead of considering a constant learning rate $\varepsilon$, we adopt a geometric progression: the initial learning rate $\varepsilon_0$ is multiplied by the scaling rate $d$ once every 30 epochs. 
 The  mini-batch size  together with $\varepsilon$ and $d$ are the training   hyper-parameters we aim at optimising. 
@@ -299,29 +298,22 @@ This set of 9  hyper-parameters is used for optimisation in three different scen
 \item the \emph{smoothed dataset} obtained  by applying the smoothing filter described at the end of Section~\ref{sec_visual}.
 \end{itemize}
 For all scenarios, we sample uniformly from the intervals given in Table~\ref{tab_hyperparam_optim} and, after 1000 runs we select the set of parameters which provides the smallest cross-validation error when using the 90\% of regular dataset as training set and 10\% as validation set.
-In this scenario, we obtained the smallest error equal to 12.9\%  when the following set of parameters:
-Batch size $ =  0.3$,  Initial learning rate $\varepsilon  = 0.001$,  Output channels - First convolution  $= 14$, Output channels - Second convolution $= 35$, Kernel size - First convolution $= 3$, Output size: Hidden linear layer $ = 105$,  Scaling rate $d = 0.897$, Dropout probability $=  0.313$,  $L_2$ penalty constant $= 1.416E-05$.
+In this scenario, we obtained the smallest validation error equal to 12.9\%  when the following set of parameters is used:
+Batch size $ =  0.3$,  Initial learning rate $\varepsilon  = 0.001$,  Output channels - First convolution  $= 14$, Output channels - Second convolution $= 35$, Kernel size - First convolution $= 3$, Output size: Hidden linear layer $ = 105$,  Scaling rate $d = 0.897$, Dropout probability $=  0.313$,  $L_2$ penalty constant $= 1.416$e-05.
 Finally, in order to test this model on the test set, we consider an empty cross validation set (i.e., the full training set is used in the training part) and, after running this model 100 times, we obtain our best result  28\% error on the test set.
 This result is not very satisfactory, but we suppose that this is due to the poor dataset and its discrepancies between train and test sets. 
  Moreover, we observe that the random initialisation of parameters and SGD plays a big role in the final output. 
 Choosing larger cross-validation set or using  the other two scenarios (augmented  and smoothed sets), result in worse outcomes. 
   
-  
   % Conclusion
  \section{Conclusion}\label{sec_conclusion}
- We proposed a CNN model to classify  EEG data to predict a binary choice, which was chosen out of four  increasingly complex models and, as  the one which provided the smallest error on the cross-validation set. 
- On this model, we run hyper-parameter optimisation to find its best architecture and the best choice of parameters (again, this choice was done over the validation set) was then tested on the test set. 
- Out of 100 runs, our best result on test set has an accuracy of 72\% and on average we obtain an accuracy of 70\%. 
- Nevertheless,  even if we understand that this is not the correct reasoning to follow, we tried to find the best hyper-parameters for the test set.  For the following setting we obtain an accuracy of 82\% on the test set, which can be reproduced by running the best model with this pre-computed weights and bias initialisation. 
- The hyper-parameters are are:
+ We proposed a CNN model to classify  EEG data to predict a binary choice, which was chosen out of four  increasingly complex models as the one which provided the smallest error on the cross-validation set. 
+ On this model, we run hyper-parameter optimisation to find its best architecture and the best choice of parameters with respect to the validation set error. For a particular choice of parameters, we manage to obtain a 12.9\% validation error. The same parameters are then used over 100 runs of the model in which no validation is performed: here, our best result on test set has an accuracy of 72\% and on average we obtain an accuracy of 70\%. 
+ Nevertheless,  even if we understand that this is not the correct reasoning to follow, we tried to find the best hyper-parameters for the test set.  For the following setting we obtain an accuracy of 82\% on the test set. The model is stored in the best\_model/ folder in the root of the project, and a forward pass of the best model we found can be executed by running the \verb|run_forward_of_best_model.py| script in the root of the project.
+ The hyper-parameters in this case are:
  Batch size $ =  0.191$,  Initial learning rate $\varepsilon  = 0.001$,  Output channels - First convolution  $= 18$, Output channels - Second convolution $= 12$, Kernel size - First convolution $= 11$, Output size: Hidden linear layer $ = 122$,  Scaling rate $d = 0.9$, Dropout probability $=  0.35$,  $L_2$ penalty constant $=0.001$.
-With this setting we obtain  
- 
- Additional regularisation approaches we wished  we had time to test are  the early stopping, the noisy labels and the add of random noise to the training set. 
- To conclude, we believe that the proposed framework of subsequent choices we made could have performed better if the initial dataset was less noisy or more numerous. 
- As reported \cite{bci_qualcosa}, classifying EEG signals is still an ongoing research field and 
- 
- 
+
+ To conclude, we believe that the proposed framework and the subsequent choices we made could have performed better if the initial dataset was less noisy or more numerous. The regularisation strategies we adopted did not significantly improve the model; additional approaches we wished we had time to test are the early stopping, the noisy labels and the add of random noise to the training set. Nevertheless, by performing the hyper-parameter optimization we managed to achieve a slight improvement with respect to the initial chosen model in terms of validation and test error.
  
  % References
 \bibliographystyle{abbrv}
