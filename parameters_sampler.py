@@ -175,14 +175,14 @@ class ParametersSampler():
     def __init__(self):
         # dictionary with all the variables
         self.parameters = {'batch_perc': UniformParameter("float", 1, 0.1, 0.5),
-                           'eta': UniformExponentialParameter("float", 10, -3, -3),
-                           'size_conv1': UniformParameter("int",1,10,40),
-                           'size_conv2': UniformParameter("int",1,10,40),
-                           'size_kernel': UniformOddParameter("int",1,3,9),
+                           'eta': UniformExponentialParameter("float", 10, -5, -2),
+                           'size_conv1': UniformParameter("int",1,10,80),
+                           'size_conv2': UniformParameter("int",1,10,80),
+                           'size_kernel': UniformOddParameter("int",1,3,13),
                            'size_hidden_layer': UniformParameter("int",1,100,150),
                            'scale': UniformParameter("float",1,0.7,0.95),
-                           'dropout': UniformParameter("float",1,0.2,0.35),
-                           'l2_parameter': UniformExponentialParameter("float", 10, -6, -4),
+                           'dropout': UniformParameter("float",1,0.2,0.5),
+                           'l2_parameter': UniformExponentialParameter("float", 10, -6, -1),
                             }
     """
     Show me: print description of all the parameters
