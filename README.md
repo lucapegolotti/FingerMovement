@@ -13,7 +13,7 @@ convolutional layer dimensions...) and then computes the number of errors wrt th
 The hyperparameters optimization was performed by running
 `python hyperoptimization.py`.
 
-We also provide a script to run a forward pass of the best "already trained" model. This gives a test error of 18% and a train error of around 2%. To launch this model,
+We also provide a script to run a forward pass of the best "already trained" model. This gives a test error of 18% and a train error of around 1%. To launch this model,
 run `python run_forward_of_best_model.py`.
 
 Description of source files
