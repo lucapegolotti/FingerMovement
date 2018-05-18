@@ -76,7 +76,7 @@ def train_model(model, criterion, train_input, \
             # Compute the loss
             loss = criterion(output, train_target_narrowed)
             scheduler.step()
-            sum_loss = sum_loss + loss.data[0]
+            sum_loss = sum_loss + loss.data.item()
 
             # Backward step
             model.zero_grad()
@@ -114,4 +114,4 @@ Random initialization of weights using Xavier uniform
 """
 def init_weights(layer):
     if type(layer) == nn.Linear:
-        torch.nn.init.xavier_uniform(layer.weight)
+        torch.nn.init.xavier_uniform_(layer.weight)

@@ -67,7 +67,7 @@ data_long     = False
 filtered      = False
 filtered_load = False
 # No cross-validation dataset is used here. cv_perc = 0.2 was used while training the hyperparameters in hyperoptimization.py
-cv_perc = 0.1
+cv_perc = 0.0
 train_input, train_target,test_input, test_target, validation_input, validation_target \
     = loader.load_data(data_aug=data_aug,data_long=data_long,\
     filtered=filtered,filtered_load=filtered_load,cv_perc=cv_perc)
